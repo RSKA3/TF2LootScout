@@ -1,0 +1,10 @@
+{"items": 
+[{"name": "TF_WEAPON_BAT", "defindex": 0, "item_class": "tf_weapon_bat", "item_type_name": "Bat", "item_name": "Bat", "proper_name": false, 
+"item_slot": "melee", "model_player": "models/weapons/c_models/c_bat.mdl", "item_quality": 0, "image_inventory": "backpack/weapons/c_models/c_bat", 
+"min_ilevel": 1, "max_ilevel": 1, "image_url": "http://media.steampowered.com/apps/440/icons/c_bat.50e76c8094493ae96cf10d8df676a93cd13516fc.png", 
+"image_url_large": "http://media.steampowered.com/apps/440/icons/c_bat_large.d036be2350e477ddb30576b41b83a6667c02b08b.png", "craft_class": "weapon", 
+"craft_material_type": "weapon", "capabilities": {"nameable": true, "can_gift_wrap": true, "can_craft_mark": true, "can_be_restored": true, 
+"strange_parts": true, "can_card_upgrade": true, "can_strangify": true, "can_killstreakify": true, "can_consume": true},
+"used_by_classes": ["Scout"]}], 
+
+"time": "Wed Apr  3 18:20:59 2024"}
