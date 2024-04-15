@@ -2,9 +2,13 @@ import sqlite3
 
 from item import Item
 
+# TODO: delete
+import time
+
 class DB():
     def __init__(self, filename: str):
         self.connect = sqlite3.connect(filename)
+        self.connect.row_factory = sqlite3.Row
         self.cursor = self.connect.cursor()
     
     def add_items(self, items: dict, column: str):
@@ -14,7 +18,6 @@ class DB():
                     item["killstreaker"], item["paint"], item["spell"], item["effect"], item["parts"])
 
             self.cursor.execute(f'INSERT INTO {column} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', params)
-        self.connect.commit()
 
     def compare_items(self, items: dict, column: str) -> list:
         new_items = []
@@ -23,55 +26,36 @@ class DB():
                 new_items.append(item)
         return new_items
     
-    def get_steamids_by_category(self, column: str, category: str) -> list:
-        rows =  self.cursor.execute(f"SELECT steamid FROM {column} WHERE category = '{category}';").fetchall()
-        return [row[0] for row in rows]
+    def get_steamids_from_categories(self, column: str, categories: list) -> list:
+        steamids = []
+        for category in categories:
+            rows =  self.cursor.execute(f"SELECT steamid FROM {column} WHERE category = '{category}';").fetchall()
+            steamids.extend([row[0] for row in rows])
+        return steamids
     
     def get_all_steamids(self, column: str) -> list:
         rows = self.cursor.execute(f"SELECT steamid FROM {column};").fetchall()
         return [row[0] for row in rows]
 
-
     def check_if_item_exists(self, item: dict, column: str) -> dict:
-        params = (item["assetid"], item['classid'], item['instanceid'])
-        result = self.cursor.execute(f"SELECT * FROM {column} WHERE assetid = (?) AND classid = (?) AND instanceid = (?);", params)
-        return bool(result.fetchone())
+        params = (item["steamid"], item["assetid"], item['classid'], item['instanceid'])
+        result = self.cursor.execute(f"SELECT EXISTS (SELECT * FROM {column} WHERE steamid = (?) AND assetid = (?) AND classid = (?) AND instanceid = (?));", params)
+        # fetches first object because of the row factory setting
+        return bool(result.fetchone()[0])
     
     def delete_all_from_column(self, column: str) -> bool:
-        try:
-            self.cursor.execute(f"DELETE FROM {column}")
-            return True
-        except Exception:
-            return False
-    
-    def find_valuable_items_database(self, column: str) -> dict:
-        valuable_items = []
+        self.cursor.execute(f"DELETE FROM {column}")
         
-        # paint
-        white = self.cursor.execute(f"SELECT * FROM {column} WHERE paint = 'An Extraordinary Abundance of Tinge';").fetchall()
-        black = self.cursor.execute(f"SELECT * FROM {column} WHERE paint = 'A Distinctive Lack of Hue';").fetchall()
-        lime = self.cursor.execute(f"SELECT * FROM {column} WHERE paint = 'The Bitter Taste of Defeat and Lime';").fetchall()
-        pink = self.cursor.execute(f"SELECT * FROM {column} WHERE paint = 'A Distinctive Lack of Hue';").fetchall()
-        # checks if fire horns or tornado with good sheens
-        killstreaker = self.cursor.execute(f"SELECT * FROM {column} WHERE (killstreaker = 'Fire Horns' OR killstreaker = 'Tornado') AND (sheen = 'Team Shine' OR sheen = 'Villainous Violet' OR sheen = 'Hot Rod');").fetchall()
-        # checks for spelled items
-        spells = self.cursor.execute(f"SELECT * FROM {column} WHERE spell != 'None';").fetchall()
-        # checks for strange parts
-        parts = self.cursor.execute(f"SELECT * FROM {column} WHERE (parts = 'Dominations' OR parts = 'Damage Dealt' OR parts = 'Player Hits');").fetchall()
+    
+    def database_to_dict(self, column: str) -> dict:
+        return [dict(row) for row in self.cursor.execute(f"SELECT * FROM {column};").fetchall()]
+    
+    def delete_from_column_where_steamid(self, column: str, steamid):
+        if steamid:
+            self.cursor.execute('DELETE FROM "{}" WHERE steamid = ?;'.format(column.replace('"', '""')), (steamid, ))
 
-        valuable_lists = [white, black, lime, pink, killstreaker, spells, parts]
-
-        for valuable_list in valuable_lists:
-            if valuable_list != None:
-                valuable_items.extend(valuable_list)
-
-        valuable_list = list(set(valuable_list))
-
-        valuable_items_objects = []
-        for row in valuable_items:
-            valuable_items_objects.append(Item.from_params_to_dict(*row))
-
-        return valuable_items_objects
+    def commit(self):
+        self.connect.commit()
 
     def test(self, column):
         result = self.cursor.execute(f"SELECT * FROM {column} WHERE spell == 'None';")

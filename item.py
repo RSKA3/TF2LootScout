@@ -1,5 +1,9 @@
 class Item():
-    def init_item(self):
+    def __init__(self):
+        self.valuable_parts = ["Dominations", "Damage Dealt", "Player Hits"]
+        self.valuable_paints = ['An Extraordinary Abundance of Tinge', 'A Distinctive Lack of Hue', 'The Bitter Taste of Defeat and Lime', 'Pink as Hell', 'Team Spirit']
+
+    def reset_item(self):
         # create Item dict
         self.item = {
             "steamid" : None,
@@ -27,7 +31,7 @@ class Item():
 
 
     def to_item(self, asset, description, steamid = None) -> dict:
-        self.init_item()
+        self.reset_item()
 
         # fill in self.item
         self.item["assetid"] = asset["assetid"]
@@ -75,7 +79,19 @@ class Item():
         }
 
         return item
-
+    
+    def find_valuable_items(self, items):
+        valuabale_items = []
+        for item in items:
+            if item["paint"] and item["paint"] in self.valuable_paints:
+                valuabale_items.append(item)
+            elif item["sheen"] and item["killstreaks"] and item["killstreaker"] in ["Fire Horns", "Tornado"] and item["sheen"] in ["Team Shine", "Villainous Violet", "Hot Rod"]:
+                valuabale_items.append(item)
+            elif item["spell"]:
+                valuabale_items.append(item)
+            elif item["parts"] and any(part in item["parts"] for part in self.valuable_parts):
+                valuabale_items.append(item)
+        return valuabale_items
     
     def get_tag(self, tag):
         match tag["category"]:
@@ -150,7 +166,7 @@ class Item():
         return False
     
     def check_paint(self, value, item):
-        if "Paint" in value and item["type"] != "Supply Crate" and "style" not in value:
+        if "Paint" in value and item["type"] != "Supply Crate" and "Style" not in value:
             return True
         return False
     
@@ -182,7 +198,7 @@ class Item():
         if ":" in value and any(part in value for part in parts):
             return True
         return False
-
+    
 
     # getters
     def get_sheen_and_killstreaker(self, value):
