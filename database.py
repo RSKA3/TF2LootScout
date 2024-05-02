@@ -2,20 +2,17 @@ import sqlite3
 
 from item import Item
 
-# TODO: delete
-import time
-
 class DB():
-    def __init__(self, filename: str):
-        self.connect = sqlite3.connect(filename)
+    def __init__(self, conn):
+        self.connect = conn
         self.connect.row_factory = sqlite3.Row
         self.cursor = self.connect.cursor()
     
     def add_items(self, items: dict, column: str):
         for item in items:
-            params = (item["steamid"], item["assetid"], item['classid'], item['instanceid'], item['tradable'], item["craftable"], item['name'], item['quality'], 
-                    item['type'], item['rarity'], item['collection'], item['exterior'], item['sku'], item["killstreaks"], item["sheen"],
-                    item["killstreaker"], item["paint"], item["spell"], item["effect"], item["parts"])
+            params = (item.steamid, item.assetid, item.classid, item.instanceid, item.tradable, item.craftable, item.name, item.quality, 
+                    item.type, item.rarity, item.collection, item.exterior, item.sku, item.killstreaks, item.sheen,
+                    item.killstreaker, item.paint, item.spell, item.effect, item.parts)
 
             self.cursor.execute(f'INSERT INTO {column} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', params)
 
@@ -38,24 +35,20 @@ class DB():
         return [row[0] for row in rows]
 
     def check_if_item_exists(self, item: dict, column: str) -> dict:
-        params = (item["steamid"], item["assetid"], item['classid'], item['instanceid'])
+        params = (item.steamid, item.assetid, item.classid, item.instanceid)
         result = self.cursor.execute(f"SELECT EXISTS (SELECT * FROM {column} WHERE steamid = (?) AND assetid = (?) AND classid = (?) AND instanceid = (?));", params)
         # fetches first object because of the row factory setting
         return bool(result.fetchone()[0])
     
     def delete_all_from_column(self, column: str) -> bool:
         self.cursor.execute(f"DELETE FROM {column}")
-        
-    
+         
     def database_to_dict(self, column: str) -> dict:
         return [dict(row) for row in self.cursor.execute(f"SELECT * FROM {column};").fetchall()]
     
     def delete_from_column_where_steamid(self, column: str, steamid):
         if steamid:
             self.cursor.execute('DELETE FROM "{}" WHERE steamid = ?;'.format(column.replace('"', '""')), (steamid, ))
-
-    def commit(self):
-        self.connect.commit()
 
     def test(self, column):
         result = self.cursor.execute(f"SELECT * FROM {column} WHERE spell == 'None';")
