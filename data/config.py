@@ -1,16 +1,21 @@
 config = {
+    "log_file_path" : "/home/rasmus/Documents/projects/tf_valorizer/data/app.log",
     "database_file_path" : "/home/rasmus/Documents/projects/tf_valorizer/data/items.db",
 
-    "tables" : {"item_database" : "stn_bot_items", 
-                "new_item_database" : "new_stn_bot_items", 
-                "valuable_item_database" : "valuable_stn_bot_items",
-                "error_table" : "runs"},
+    "tables" : {"item_table" : "stn_bot_items", 
+                "new_item_table" : "new_stn_bot_items", 
+                "valuable_item_table" : "valuable_stn_bot_items",
+                "error_table" : "runs",
+                "bots_table" : "bots"},
         
     "categories_to_parse" : ["genuines"],
-    
+    "valubable_sheens" : ["fire Horns", "tornado"],
+    "valuable_killstreakers" : ["team shine", "villainous violet", "hot rod"],
     "valuable_aspects" : {"valuable_parts" : ["Dominations", "Damage Dealt", "Player Hits"],
                         "valuable_paints" : ['An Extraordinary Abundance of Tinge', 'A Distinctive Lack of Hue',
-                                            'The Bitter Taste of Defeat and Lime', 'Pink as Hell', 'Team Spirit']},
+                                            'The Bitter Taste of Defeat and Lime', 'Pink as Hell', 'Team Spirit'],
+                        "valuable_sheens" : ["fire Horns", "tornado"],
+                        "valuable_killstreakers" : ["team shine", "villainous violet", "hot rod"]},
     "aspects" : {"parts" : ["Airborne Enemies Killed", "Heavies Killed", "Demomen Killed", "Revenge Kills", "Domination Kills", "Soldiers Killed", "Full Moon Kills", 
                             "Cloaked Spies Killed", "Scouts Killed", "Engineers Killed", "Robots Destroyed", "Low-Health Kills", "Halloween Kills", "Robots Destroyed During Halloween"
                             "Underwater Kills", "Snipers Killed", "Kills While Übercharged", "Pyros Killed", "Defender Kills", "Medics Killed", "Tanks Destroyed"

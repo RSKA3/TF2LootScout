@@ -1,0 +1,8 @@
+2024-05-03 14:12:23,653 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-03 14:12:24,168 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310188284/440/2?count=3000 HTTP/1.1" 200 43635
+2024-05-03 14:14:15,600 INFO __main__ Program started: 1714734855
+2024-05-03 14:14:15,602 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-03 14:14:16,221 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310188284/440/2?count=3000 HTTP/1.1" 200 43592
+2024-05-03 14:17:10,551 INFO __main__ 1714735030 Program started
+2024-05-03 14:17:10,553 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-03 14:17:11,336 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310188284/440/2?count=3000 HTTP/1.1" 200 43592

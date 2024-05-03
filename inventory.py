@@ -42,6 +42,7 @@ class Map_inventory():
             for description in inventory["descriptions"]:
                 if asset["classid"] == description["classid"] and asset["instanceid"] == description["instanceid"]:
                     item = self.item.to_item(asset=asset, description=description, steamid=steamid)
+                    
                     items.append(item)
         return items
         

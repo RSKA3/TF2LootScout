@@ -13,9 +13,10 @@ import sqlite3
 from time import time
 
 # configures a logger
-logging.basicConfig(filename='/tmp/myapp.log', level=logging.DEBUG, 
+logging.basicConfig(filename=config["log_file_path"], level=logging.DEBUG, 
                     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger=logging.getLogger(__name__)
+logger.info(f"{int(time())} Program started")
 
 # creates sqlite3 connection, cursor and loads DB class
 connect = sqlite3.connect(config["database_file_path"])
@@ -28,17 +29,16 @@ item = Item_methods()
 notifications = Notifications(token = "7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI", chat_id = "6653108996")
 
 # gets tables
-item_table = config["tables"]["item_database"]
-new_item_table = config["tables"]["new_item_database"]
-valuable_item_table = config["tables"]["valuable_item_database"]
+item_table = config["tables"]["item_table"]
+new_item_table = config["tables"]["new_item_table"]
+valuable_item_table = config["tables"]["valuable_item_table"]
 error_table = config['tables']['error_table']
 
 def add_run(*, success: int, reason: str, time: int = int(time())):
     cursor.execute(f"INSERT INTO {error_table} VALUES (?, ?, ?);", (success, reason, time))
 
-
 # which categories of bots to perse sorry :(
-categories = ["killstreaks"]
+categories = ["vintages"]
 # gets steamids from database by categories
 steamids = database.get_steamids_from_categories("stn_bots", categories)
 #steamids = database.get_all_steamids("stn_bots")
@@ -94,10 +94,12 @@ for steamid in steamids:
 
     # if tries exceed 2 close program and report error
     if tries > 2:
+        logger.info(f"{int(time())} Ran unsuccessfully, tried too many times")
         add_run(success=0, reason="Ran unsuccessfully, tried too many times", time=int(time()))
         print(f"tried {tries} times, exiting...")
         exit(1)
 
+print(all_valuable_items)
 # creates telegram message
 if all_valuable_items:
     add_run(success=1, reason=f"Ran successfully, found {len(all_valuable_items)} valuable items", time=int(time()))

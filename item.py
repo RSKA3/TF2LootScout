@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from data.config import config
 
-# TODO: delte these
-from sys import exit
-from pprint import pprint
+import re
 
 # TODO: change the projects "getters" to use regex instead
 
@@ -32,10 +30,12 @@ class Item:
 
 class Item_methods():
     def __init__(self):
-        self.valuable_parts = config["valuable_aspects"]["valuable_parts"]
-        self.valuable_paints = config["valuable_aspects"]["valuable_paints"]
+        self.valuable_parts = [part.lower() for part in config["valuable_aspects"]["valuable_parts"]]
+        self.valuable_paints = [paint.lower() for paint in config["valuable_aspects"]["valuable_paints"]]
+        self.valuable_sheens = [sheen.lower() for sheen in config["valuable_aspects"]["valuable_sheens"]]
+        self.valuabale_killstreakers = [killstreaker.lower() for killstreaker in config["valuable_aspects"]["valuable_sheens"]]
 
-        self.parts = config["aspects"]["parts"]
+        self.parts = [part.lower() for part in config["aspects"]["parts"]]
 
     #important methods
     def to_item(self, *, asset: dict, description: dict, steamid: str = None) -> dataclass:
@@ -57,15 +57,15 @@ class Item_methods():
         item.steamid = steamid
         item.classid = description["classid"]
         item.instanceid = description["instanceid"]
-        item.tradable = bool(description["tradable"])
-        item.name = description["market_name"]
+        item.tradable = description["tradable"]
+        item.name = description["market_name"].lower()
         
         # gets quality from tag values
         for tag in description["tags"]:
             if tag["category"].lower() == "quality":
-                item.quality = tag["internal_name"]
+                item.quality = tag["internal_name"].lower()
             elif tag["category"].lower() == "type":
-                item.type = tag["internal_name"]
+                item.type = tag["internal_name"].lower()
 
         # gets all description values
         if "descriptions" in description:
@@ -86,13 +86,13 @@ class Item_methods():
         
         valuabale_items = []
         for item in items:
-            if item.paint and item.paint in self.valuable_paints:
+            if item.paint and item.paint.lower() in self.valuable_paints:
                 valuabale_items.append(item)
-            elif item.sheen and item.killstreaks and item.killstreaker in ["Fire Horns", "Tornado"] and item.sheen in ["Team Shine", "Villainous Violet", "Hot Rod"]:
+            elif item.sheen and item.killstreaker and item.killstreaker.lower() in self.valuabale_killstreakers and item.sheen.lower() in self.valuable_sheens:
                 valuabale_items.append(item)
             elif item.spell:
                 valuabale_items.append(item)
-            elif item.parts and any(part in item.parts for part in self.valuable_parts):
+            elif item.parts and any(part.lower() in item.parts.lower() for part in self.valuable_parts):
                 valuabale_items.append(item)
         return valuabale_items
             
@@ -133,6 +133,7 @@ class Item_methods():
                 item.craftable = False
             
             elif self.check_parts(value):
+                print(value)
                 if item.parts:
                     item.parts += "," + self.get_part(value)
                 else:
@@ -161,22 +162,22 @@ class Item_methods():
         return False
     
     def check_paint(self, value, item):
-        if "paint" in value and item.type != "Supply Crate" and "Style" not in value:
+        if "paint color" in value and item.type != "supply crate" and "style" not in value:
             return True
         return False
     
     def check_spell(self, value, item):
-        if "spell" in value and item.name != "The Point and Shoot" and item.name != "Spellbook Magazine":
+        if "spell" in value and item.name != "the point and shoot" and item.name != "spellbook magazine":
             return True
         return False
 
     def check_effect(self, value, item):
-        if "unusual Effect" in value and item.type != "Supply Crate":
+        if "unusual effect" in value and item.type != "supply crate":
             return True
         return False
     
     def check_craftability(self, value):
-        if value == "( not Usable in Crafting )":
+        if value == "( not usable in crafting )":
             return True
         return False
     
@@ -188,35 +189,49 @@ class Item_methods():
 
     # getters
     def get_sheen_and_killstreaker(self, value):
-        """ returns:
-                {"sheen" : str, "killstreaker" : str}"""
-        
-        killstreaker, sheen = value.split(",")
-        killstreaker = killstreaker.replace("(killstreaker: ", "")
-        sheen = sheen.replace(" sheen: ", "").replace(")", "")
+        """
+        Args:
+            value:
+                str: "(killstreaker: incenerator, sheen: hot-rod)"
 
-        return {"sheen" : sheen, "killstreaker" : killstreaker}
+        returns:
+            {"sheen" : str, "killstreaker" : str} 
+            or None if not in correct format"""
+        
+        match = re.search(r"\(killstreaker: (?P<killstreaker>\D+), sheen: (?P<sheen>\D+)\)", value)
+        if match:
+            killstreaker = match.group("killstreaker")
+            sheen = match.group("sheen")
+            return {"sheen" : sheen, "killstreaker" : killstreaker}
     
     def get_sheen(self, value):
-        sheen = value.split("sheen: ")[1]
-        if ")" in sheen:
-            sheen = sheen.replace(")", "")
-        return sheen
-    
-    def get_killstreaker(self, value):
-        return value.replace("killstreaker: ", "")
-    
+        match = re.search(r"sheen: (?P<sheen>[a-z0-9 .\-']+)", value)
+        if match:
+            return match.group("sheen")
+   
     def get_paint(self, value):
-        return value.replace("paint Color: ", "")
+        print(value)
+        match = re.search(r"paint color: (?P<paint>[a-z0-9 .\-']+)", value)
+        if match:
+            return match.group("paint")
     
     def get_spell(self, value):
-        return value.replace("halloween: ", "").replace("(spell only active during event)", "")
+        print(value)
+        match = re.search(r"halloween: (?P<spell>[a-z0-9 .\-']+)", value)
+        if match:
+            return match.group("spell")
 
     def get_effect(self, value):
-        return value.replace("★ unusual Effect: ", "")
+        print(value)
+        match = re.search(r"unusual effect: (?P<effect>[a-z0-9 .\-']+)", value)
+        if match:
+            return match.group("effect")
     
     def get_part(self, value):
-        return value.split(":")[0].replace("(", "")
+        print(value)
+        match = re.search(r"\((?P<part>[a-z0-9 .\-'ü]+):", value)
+        if match:
+            return match.group("part")
     
 
 def main() -> None:
