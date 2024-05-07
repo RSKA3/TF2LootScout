@@ -6,7 +6,8 @@ config = {
                 "new_item_table" : "new_stn_bot_items", 
                 "valuable_item_table" : "valuable_stn_bot_items",
                 "error_table" : "runs",
-                "bots_table" : "bots"},
+                "bots_table" : "bots",
+                "stn_table" : "stn_schema"},
         
     "categories_to_parse" : ["genuines"],
     "valubable_sheens" : ["fire Horns", "tornado"],

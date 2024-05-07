@@ -39,3 +39,54 @@
 2024-05-06 15:24:58,428 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310188284/440/2?count=3000 HTTP/1.1" 200 40480
 2024-05-06 15:25:00,246 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): api.telegram.org:443
 2024-05-06 15:25:00,540 DEBUG urllib3.connectionpool https://api.telegram.org:443 "POST /bot7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI/sendMessage?chat_id=6653108996&text=2+valuable+items%0A+vintage+whiskered+gentleman%2C+Vintage+Collector%0A+vintage+whiskered+gentleman%2C+Vintage+Collector HTTP/1.1" 200 373
+2024-05-07 11:59:31,804 INFO __main__ 1715072371 Program started
+2024-05-07 11:59:31,806 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-07 11:59:32,906 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198383794129/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 11:59:37,707 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199582352552/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 11:59:41,618 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310024994/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 11:59:46,071 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198309998421/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 11:59:49,945 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310454087/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 11:59:53,840 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198309976634/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 11:59:57,531 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310524424/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:01,274 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199582907694/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:04,635 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198309190452/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:08,421 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198309291300/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:12,050 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198309405764/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:15,218 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198923568511/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:19,677 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310691078/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:23,613 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198309750232/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:26,724 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310188284/440/2?count=3000 HTTP/1.1" 200 40674
+2024-05-07 12:00:28,154 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198311319887/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:30,874 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198311521627/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:33,983 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199026476781/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:36,585 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199026476781/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:00:40,188 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): stntrading.eu:443
+2024-05-07 12:00:40,386 DEBUG urllib3.connectionpool https://stntrading.eu:443 "POST /api/search HTTP/1.1" 200 None
+2024-05-07 12:02:18,418 INFO __main__ 1715072538 Program started
+2024-05-07 12:02:18,425 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-07 12:02:19,779 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198383794129/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:02:21,943 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199582352552/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:05:05,171 INFO __main__ 1715072705 Program started
+2024-05-07 12:05:11,559 INFO __main__ 1715072711 Program started
+2024-05-07 12:05:11,561 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-07 12:05:12,134 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198310188284/440/2?count=3000 HTTP/1.1" 200 40674
+2024-05-07 12:05:13,410 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): api.telegram.org:443
+2024-05-07 12:05:13,711 DEBUG urllib3.connectionpool https://api.telegram.org:443 "POST /bot7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI/sendMessage?chat_id=6653108996&text=2+valuable+items%0ANAME%3A+vintage+whiskered+gentleman%2C+BOT%3A+Vintage+Collector%2C+LINK%3A+https%3A%2F%2Fstntrading.eu%2Fitem%2Ftf2%2FVintage%2BWhiskered%2BGentleman%0A%0ANAME%3A+vintage+hustler%27s+hallmark%2C+BOT%3A+Vintage+Collector%2C+LINK%3A+https%3A%2F%2Fstntrading.eu%2Fitem%2Ftf2%2FVintage%2BHustler%2527s%2BHallmark%0A HTTP/1.1" 200 711
+2024-05-07 12:08:17,105 INFO __main__ 1715072897 Program started
+2024-05-07 12:08:17,107 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-07 12:08:18,167 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198383794129/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:08:26,369 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199582352552/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:08:31,992 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): stntrading.eu:443
+2024-05-07 12:08:32,275 DEBUG urllib3.connectionpool https://stntrading.eu:443 "POST /api/search HTTP/1.1" 200 None
+2024-05-07 12:08:54,700 INFO __main__ 1715072934 Program started
+2024-05-07 12:08:54,702 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-07 12:08:55,681 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198383794129/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:09:03,919 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199582352552/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:09:56,301 INFO __main__ 1715072996 Program started
+2024-05-07 12:09:56,303 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): steamcommunity.com:443
+2024-05-07 12:09:57,599 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561198383794129/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:10:05,790 DEBUG urllib3.connectionpool https://steamcommunity.com:443 "GET /inventory/76561199582352552/440/2?count=3000 HTTP/1.1" 200 None
+2024-05-07 12:10:11,504 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): stntrading.eu:443
+2024-05-07 12:10:11,674 DEBUG urllib3.connectionpool https://stntrading.eu:443 "POST /api/search HTTP/1.1" 200 None
+2024-05-07 12:10:11,768 DEBUG urllib3.connectionpool Starting new HTTPS connection (1): api.telegram.org:443
+2024-05-07 12:10:12,043 DEBUG urllib3.connectionpool https://api.telegram.org:443 "POST /bot7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI/sendMessage?chat_id=6653108996&text=1+valuable+items%0ANAME%3A+strange+specialized+killstreak+festive+sniper+rifle%2C+BOT%3A+Killstreakifier%0A HTTP/1.1" 200 356

@@ -3,6 +3,7 @@ from database import DB
 from item import Item_methods
 from notifications import Notifications
 from data.config import config
+from stn import Stn
 #TODO: implement logging
 import logging
 
@@ -27,6 +28,7 @@ Loader = Load_inventory()
 Mapper = Map_inventory()
 item = Item_methods()
 notifications = Notifications(token = "7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI", chat_id = "6653108996")
+stn = Stn(connect, config["tables"]["stn_table"])
 
 # gets tables
 item_table = config["tables"]["item_table"]
@@ -38,7 +40,7 @@ def add_run(*, success: int, reason: str, time: int = int(time())):
     cursor.execute(f"INSERT INTO {error_table} VALUES (?, ?, ?);", (success, reason, time))
 
 # which categories of bots to perse sorry :(
-categories = ["vintages"]
+categories = ["killstreaks"]
 # gets steamids from database by categories
 steamids = database.get_steamids_from_categories("stn_bots", categories)
 #steamids = database.get_all_steamids("stn_bots")
@@ -111,7 +113,14 @@ if all_valuable_items:
         except Exception:
             pass
 
-        if name:
+        stn_item = stn.search(item.name)
+        link = None
+        if stn_item:
+            link = stn_item["url"]
+
+        if name and link:
+            message += f"\nNAME: {item.name}, BOT: {name}, LINK: {link}\n"
+        elif name:
             message += f"\nNAME: {item.name}, BOT: {name}\n"
         else:
             message += f"\nNAME: {item.name}\n"
