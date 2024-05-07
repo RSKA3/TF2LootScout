@@ -106,11 +106,19 @@ if all_valuable_items:
 
     message = f"{len(all_valuable_items)} valuable items"
     for item in all_valuable_items:
-        message += "\n" + item.name
+        try:
+            name = cursor.execute("SELECT name FROM stn_bots WHERE steamid = ?;", (item.steamid, )).fetchone()[0]
+        except Exception:
+            pass
+
+        if name:
+            message += f"\nname: {item.name}, bot: {name}"
+        else:
+            message += f"\nname: {item.name}"
 
     # sends telegram message
     notifications.send_message(message = message)
-else:
+else:   
     add_run(success=1, reason=f"Ran successfully, found no valuable items", time=int(time()))
 
 #commits all changes to database
