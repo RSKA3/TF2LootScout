@@ -112,9 +112,9 @@ if all_valuable_items:
             pass
 
         if name:
-            message += f"\nname: {item.name}, bot: {name}"
+            message += f"\nNAME: {item.name}, BOT: {name}\n"
         else:
-            message += f"\nname: {item.name}"
+            message += f"\nNAME: {item.name}\n"
 
     # sends telegram message
     notifications.send_message(message = message)
