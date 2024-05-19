@@ -50,6 +50,7 @@ class DB():
         if steamid:
             self.cursor.execute('DELETE FROM "{}" WHERE steamid = ?;'.format(column.replace('"', '""')), (steamid, ))
 
+    # TESTING
     def test(self, column):
         result = self.cursor.execute(f"SELECT * FROM {column} WHERE spell == 'None';")
         result_result = result.fetchone()

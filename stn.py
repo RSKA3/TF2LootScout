@@ -1,232 +1,153 @@
 import requests
-import json
 import pprint
-from bs4 import BeautifulSoup
-import re
 import sqlite3
-import re
+from time import time
+import urllib.parse
 
-from data.config import config
+API_KEY = "e92debb161c8d23c131e43184a47969c"
 
 class Stn():
-    def __init__(self, connect, table: str):
+    def __init__(self, *, connect, table: str, api_key):
         self.conn = connect
         self.conn.row_factory = sqlite3.Row
         self.row_cursor = self.conn.cursor()
         self.default_table = table
 
+        self.api_key = api_key
+
         self.PAGE_URL = "https://stntrading.eu"
 
-        self.cookies = {
-            'cf_clearance': 'LEtujJY1dM5iHdmk.8Aoj8yd_w.Ra4zC1xGafM2JCzM-1713639364-1.0.1.1-mGSv1oiS3WzPxuzOjR9FLJLiWw.WQgdzw_sIZE9w_NmJ3CreQhfHHPcgSrYR0IcYdhLp2hQ9Ti3Bs8B_621Pfg',
-            'stn_hash': '0820147cb78d3beea0934ed540e48da3',
-            '__cflb': '0H28vBBkjWkeFGpkqAzJEXRDzPd1g8MfvmSJwCRP44d',
-            'browser': '1',
-        }
+# new STN beta API functions
+# credit related functions
+    def get_credits_from_api(self) -> int:
+        url = "https://api.stntrading.eu/GetCredit/v1"
+        r = requests.get(f"{url}?apikey={self.api_key}")
+        r_json = r.json()
+        return int(r_json["credit"])
 
-    def _search(self, search: str) -> json:
-        json_data = [
-            {
-                'indexName': 'products',
-                'params': {
-                    'facets': [
-                        'categories.lvl0',
-                        'in_stock',
-                        'key_value',
-                        'tf2.collection',
-                        'tf2.grade',
-                        'tf2.quality',
-                        'tf2.unusual_effect',
-                    ],
-                    'highlightPostTag': '__/ais-highlight__',
-                    'highlightPreTag': '__ais-highlight__',
-                    'hitsPerPage': 40,
-                    'maxValuesPerFacet': 250,
-                    'page': 0,
-                    'query': search,
-                    'tagFilters': '',
-                },
-            },
-        ]
+    def get_credit_costs_from_api(self):
+        url = "https://api.stntrading.eu/GetApiCosts/v1"
+        r = requests.get(f"{url}?apikey={self.api_key}")
+        r_json = r.json()
+        return r_json["result"]
 
-        result = self.get_or_post_page("POST", "https://stntrading.eu/api/search", json_data)
-        if result["success"]:
-            return result["result"].json()
-        return result
-    
-    # formatters
-    def get_only_numbers(self, string: str) -> float:
-        lol = re.search(r'(\d+\.?\d{0,2})', string)
-        if lol:
-            return lol.group()
-        return 0
+    def check_if_enough_credits(self, credits_needed: int) -> bool:
+        my_credits = self.get_credits_from_api()
+        return my_credits >= credits_needed
 
-    def format_price(self, price: str) -> dict:
-        new_price = price.lower()
-        if "," in new_price:
-            new_price = new_price.split(",")
+# schema and item details related functions
+    def get_item_details_from_api(self, item_name: str) -> dict:
+        url = "https://api.stntrading.eu/GetItemDetails/v1"
+        r = requests.get(f"{url}?full_name={item_name}&apikey={self.api_key}")
+        r_json = r.json()
+        return r_json
+
+    def add_item_details_to_database(self, item_details: dict):
+        table = "stn_schema"
+        name = item_details["full_name"]
+        buy_keys = item_details["pricing"]["buy"]["keys"] 
+        buy_metal = item_details["pricing"]["buy"]["metal"]
+        sell_keys = item_details["pricing"]["sell"]["keys"]
+        sell_metal = item_details["pricing"]["sell"]["metal"]
+        current_stock = item_details["stock"]["level"]
+        stock_limit = item_details["stock"]["limit"]
+        insert_values = (buy_keys, buy_metal, sell_keys, sell_metal, current_stock, stock_limit, time(), name) # NAME HAS TO BE LAST
+        self.row_cursor.execute(f"UPDATE {table} SET buy_keys = (?), buy_metal = (?), sell_keys = (?), sell_metal = (?), current_stock = (?), stock_limit = (?), time = (?) WHERE name = (?)", insert_values)
+        self.conn.commit()
+
+    def get_item_details_from_database(self, name):
+        name = name.strip()
+        return self.row_cursor.execute("SELECT * FROM stn_schema WHERE UPPER(name) = UPPER(?)", (name, )).fetchone()
+
+    def get_item_schema_from_api(self, type: str = None) -> dict:
+        url = "https://api.stntrading.eu/GetSchema/v1"
+        if type:
+            r = requests.get(f"{url}?apikey={self.api_key}&type={type}")
         else:
-            new_price = [new_price]
+            r = requests.get(f"{url}?apikey={self.api_key}")
+        r_json = r.json()
+        return r_json
 
-        prices = {"keys" : None, "metal" : None}
-        for unit in new_price:
-            if "key" in unit:
-                prices["keys"] = self.get_only_numbers(unit)
-            elif "ref" in unit:
-                prices["metal"] = self.get_only_numbers(unit)   
+    def add_schema_to_database(self, schema: dict):
+        table = "stn_schema"
+        items = schema["result"]["schema"]
+        for item in items:
+            self.cursor.execute(f"INSERT OR IGNORE INTO {table} (name) VALUES (?)", (item, ))
+        self.connect.commit()
 
-        return prices
+# searches table
+    def get_match_from_database(self, search):
+        match = self.row_cursor.execute("SELECT match FROM searches WHERE UPPER(search) = UPPER(?)", (search, )).fetchone()
+        if match:
+            return match
+        return None
     
-    def format_name(name: str) -> str:
-        name = name.lower()
-        if "unusual" in name and "taunt" not in name:
-            name = name.replace("unusual", "")
+    def add_match_to_database(self, search, match):
+        self.row_cursor.execute("INSERT INTO searches VALUES (?, ?)", (search, match))
 
-        return name.strip()
+# link creator
+    def create_item_link(self, item_name:str):
+        formatted_query = urllib.parse.quote_plus(item_name)
+        base_item_path = "https://stntrading.eu/item/tf2/"
+        return f"{base_item_path}{formatted_query}"
 
-    def format_search(self, search_json: json) -> dict:
-        items_json = search_json["results"][0]["hits"]
-        items = []
-        for item_json in items_json:
-            price = self.format_price(item_json["price_as_string"])
-            item = {"id" : item_json["objectID"],
-                    "sku" : None,
-                    "name" : item_json["name"], 
-                    "buy_keys" : price["keys"],
-                    "buy_metal" : price["metal"],
-                    "sell_keys" : None,
-                    "sell_metal" : None,
-                    "url" : self.PAGE_URL + item_json["page_url"]}
-            items.append(item)
-        return items
-    
-
-    def get_prices_from_link(self, link: str) -> dict:
-        result = self.post_page(link)
-        if result["success"]:
-            #with open("data/deleteme.html", "w") as file:
-            #    file.write(result["result"].text)
-            soup = BeautifulSoup(result["result"].content, "html.parser")
-            div_tags = soup.find_all("div", {"class": "col-sm-6"})
-            prices = {}
-            for div in div_tags:
-                paragraphs = div.find_all("p")
-                prices.update(self._get_prices_from_paragraphs(paragraphs))
-            return prices
-        return result
-    
-    def _get_prices_from_paragraphs(self, paragraphs):
-        if "Sell" in paragraphs[0].text:
-            return {"sell_price" : paragraphs[1].text, "can_sell" : re.sub("\D", "", paragraphs[2].text)}
-
-        elif "Buy" in paragraphs[0].text:
-            item = {"buy_price" : paragraphs[1].text}
-            if "Stock" in paragraphs[2].text:
-                item["can_buy"] = re.sub("\D", "", paragraphs[2].text)
-            return item
-
-    def get_or_post_page(self, get_or_post: str, link: str, json_data: json = None):
-        """ Creates post request with correct headers and cookies 
-        
-        Args:
-            get_or_post:
-                string like "GET" or "POST"
-            link:
-                string like 'https://stntrading.eu/item/tf2/Shoestring+Santa'
-            json_data:
-                optional json for requests that require it
-
-        returns:
-            {"success" : 1, "result" : ...}
-            {"success" : 0, "error" : ...} """
-
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            # 'Accept-Encoding': 'gzip, deflate, br',
-            'Content-Type': 'application/json',
-            'Origin': 'null',
-            'Alt-Used': 'stntrading.eu',
-            'Connection': 'keep-alive',
-            # 'Cookie': 'cf_clearance=LEtujJY1dM5iHdmk.8Aoj8yd_w.Ra4zC1xGafM2JCzM-1713639364-1.0.1.1-mGSv1oiS3WzPxuzOjR9FLJLiWw.WQgdzw_sIZE9w_NmJ3CreQhfHHPcgSrYR0IcYdhLp2hQ9Ti3Bs8B_621Pfg; stn_hash=0820147cb78d3beea0934ed540e48da3; __cflb=0H28vBBkjWkeFGpkqAzJEXRDzPd1g8MfvmSJwCRP44d; browser=1',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            # Requests doesn't support trailers
-            # 'TE': 'trailers',
-        }
-
-        try:
-            if "post" in get_or_post.lower():
-                response = requests.post(link, headers = headers, json = json_data, cookies = self.cookies)
-            elif "get" in get_or_post.lower():
-                response = requests.get(link, headers = headers, json = json_data, cookies = self.cookies)
-            else:
-                print("get_or_post_page, variable get_or_post not specified in correct format, defaulting to get...")
-                response = requests.get(link, headers = headers, json = json_data, cookies = self.cookies)
-
-        except Exception as e:
-            return {"success" : False, "error" : e}
-        
-        if "https://steamcommunity.com" in response.url:
-            return {"success" : False, "error" : "redirect to steam login, most likely issue in cookies"}
-        
-        return {"success" : True, "result" : response}
-
-
-    # sql
-    def check_if_id_exists(self, table: str, id: str) -> int:
-        results = self.row_cursor.execute(f"SELECT EXISTS (SELECT * FROM {table} WHERE id = ?);", (str(id), )).fetchone()[0]
-        return results
-
-    def add_item(self, table: str, item: dict):
-        # will only add unique items because of primary key constraint on id
-        if not self.check_if_id_exists(table, id):
-            self.row_cursor.execute(f"INSERT OR IGNORE INTO {table} VALUES (?, ?, ?, ?, ?, ?, ?, ?);", list(item.values()))
-
-        self.conn.commit()
-
-
+# search func
     def search(self, search: str):
-        # check if found in database
-        # TODO: change (name) to some modifyable column variable
-        if find := self.search_database(search):
-            return find
-
-        # if not found in database
-        search_dict = self._search(search)
-        formated_search = self.format_search(search_dict)
-
-        for item in formated_search:
-            self.add_item("stn_schema", item)
-
+        # checks database for item
+        item = self.get_item_details_from_database(search)
+        if item:
+            return item
+        
+        # checks previously searched table for match
+            # if match checks if previous search has yielded any results
+                # if has tries to return item
+                # else returns None
+        match = self.get_match_from_database(search)
+        if match:
+            if match["match"]:
+                item = self.get_item_details_from_database(match["match"])
+                if item:
+                    return item
+                print("could not find match from stn schema something went wrong")
+                return None
+            else:
+                print("search has previously been tried and failed")
+                return None
+        
+        print("hello world")
+        # tries to get from API
+        item = self.get_item_details_from_api(item_name=search)
+        if item["success"]:
+            # adds item to schema table
+            self.add_item_details_to_database(item["item"])
+            self.add_match_to_database(search=search, match=item["item"]["full_name"])
+            self.conn.commit()
+            
+            item = self.get_item_details_from_database(item["item"]["full_name"])
+            if item:
+                return item
+            print("couldn't find item from database with name that it just added it with what the fack man")
+            return None
+        # if not found finally adds search to table with no match
+        self.add_match_to_database(search = search, match = None)
         self.conn.commit()
-
-        if find := self.search_database(search):
-            return find
         
-    def search_database(self, search: str) -> set:
-        """ Creates different search parameters and returns in any of them gets a match """
 
-        # search with the default name
-        if find := self.row_cursor.execute(f"SELECT * FROM {self.default_table} WHERE UPPER(name) LIKE UPPER(?)", (search, )).fetchone():
-            return find
-        
-        # search with "The " appended to begining of item name 
-        if find := self.row_cursor.execute(f"SELECT * FROM {self.default_table} WHERE UPPER(name) = UPPER(?)", (f"The {search}", )).fetchone():
-            return find
+
+        # tries to find item from database
+            #if fails checks if has previously been searched from searches
+                # if succeeds gets item from database by using the match
+                # if fails tries to get item from api
+                    # if succeeds adds item to schema table and adds search and match to search table and returns item
+                    # else adds search to search with other failed searches
 
 def main() -> None:
-    db = config["database_file_path"]
     table = "stn_schema"
 
-    conn = sqlite3.connect(db)
+    conn = sqlite3.connect("data/items.db")
     stn = Stn(conn, "stn_schema") 
 
-    print(stn.search("firebrand")["url"])
+    print(stn.create_item_link("The Hair of the Dog"))
 
 if __name__ == "__main__":
     main()

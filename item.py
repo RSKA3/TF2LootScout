@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from data.config import config
 
 import re
 
@@ -29,13 +28,13 @@ class Item:
     parts : str = None
 
 class Item_methods():
-    def __init__(self):
-        self.valuable_parts = [part.lower() for part in config["valuable_aspects"]["valuable_parts"]]
-        self.valuable_paints = [paint.lower() for paint in config["valuable_aspects"]["valuable_paints"]]
-        self.valuable_sheens = [sheen.lower() for sheen in config["valuable_aspects"]["valuable_sheens"]]
-        self.valuabale_killstreakers = [killstreaker.lower() for killstreaker in config["valuable_aspects"]["valuable_sheens"]]
+    def __init__(self, *, parts: list, valuable_parts: list, valuable_paints: list, valuable_sheens: list, valuable_killstreakers: list):
+        self.valuable_parts = [part.lower() for part in valuable_parts]
+        self.valuable_paints = [paint.lower() for paint in valuable_paints]
+        self.valuable_sheens = [sheen.lower() for sheen in valuable_sheens]
+        self.valuabale_killstreakers = [killstreaker.lower() for killstreaker in valuable_killstreakers]
 
-        self.parts = [part.lower() for part in config["aspects"]["parts"]]
+        self.parts = [part.lower() for part in parts]
 
     #important methods
     def to_item(self, *, asset: dict, description: dict, steamid: str = None) -> dataclass:
@@ -100,7 +99,7 @@ class Item_methods():
         
         value = description["value"].lower()
 
-        if "crafted by" not in value:
+        if "crafted by" not in value and "custom description" not in value:
             if self.check_sheen_and_killstreaker(value):
                 streaker = self.get_sheen_and_killstreaker(value)
                 item.sheen = streaker["sheen"]
@@ -182,7 +181,9 @@ class Item_methods():
         return False
     
     def check_parts(self, value):
-        if ":" in value and any(part in value for part in self.parts):
+        pattern = r"\([\w ]+: \d+\)"
+        match = re.fullmatch(pattern, value)
+        if match and any(part in value for part in self.parts):
             return True
         return False
     

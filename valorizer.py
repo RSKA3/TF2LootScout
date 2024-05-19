@@ -1,83 +1,103 @@
-from inventory import Map_inventory, Load_inventory
+from inventory import Inventory
 from database import DB
 from item import Item_methods
 from notifications import Notifications
-from data.config import config
 from stn import Stn
-#TODO: implement logging
-import logging
 
 from requests import codes
 from time import sleep
 from sys import exit
 import sqlite3
 from time import time
+import configparser
+#TODO: implement proper logging
+import logging
 
-# configures a logger
-logging.basicConfig(filename=config["log_file_path"], level=logging.DEBUG, 
-                    format='%(asctime)s %(levelname)s %(name)s %(message)s')
+# config
+config = configparser.ConfigParser()
+config.read('data/config.ini')
+# init variables from config
+log_file_path = config.get("Paths", "log")
+database_file_path = config.get("Paths", "database")
+# Table
+all_items_table = config.get("Table", "items")
+new_items_table = config.get("Table", "new_items")
+valuable_items_table = config.get("Table", "valuable_items")
+error_table = config.get("Table", "error")
+bots_table = config.get("Table", "bots")
+stn_table = config.get("Table", "stn")
+# Valuable
+valuable_sheens = config.get("Valuable", "sheens")
+valuable_killstreakers = config.get("Valuable", "killstreakers")
+valuable_parts = config.get("Valuable", "parts")
+valuable_paints = config.get("Valuable", "paints")
+# Aspects
+parts = config.get("Aspects", "parts")
+# STN
+stn_api_key = config.get("STN", "api_key")
+
+# logger
+print(log_file_path)
+logging.basicConfig(filename=log_file_path, level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger=logging.getLogger(__name__)
 logger.info(f"{int(time())} Program started")
 
 # creates sqlite3 connection, cursor and loads DB class
-connect = sqlite3.connect(config["database_file_path"])
+connect = sqlite3.connect(database=database_file_path)
 cursor = connect.cursor()
-database = DB(connect)
+database = DB(conn=connect)
 # loads rest of classes
-Loader = Load_inventory()
-Mapper = Map_inventory()
-item = Item_methods()
+inventory = Inventory(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
+                    valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
+item = Item_methods(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
+                    valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
 notifications = Notifications(token = "7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI", chat_id = "6653108996")
-stn = Stn(connect, config["tables"]["stn_table"])
-
-# gets tables
-item_table = config["tables"]["item_table"]
-new_item_table = config["tables"]["new_item_table"]
-valuable_item_table = config["tables"]["valuable_item_table"]
-error_table = config['tables']['error_table']
+stn = Stn(connect=connect, table=stn_table, api_key=stn_api_key)
 
 def add_run(*, success: int, reason: str, time: int = int(time())):
     cursor.execute(f"INSERT INTO {error_table} VALUES (?, ?, ?);", (success, reason, time))
 
+# HERE IS WHERE THE ACTUAL CODE STARTS
+
 # which categories of bots to perse sorry :(
 categories = ["killstreaks"]
 # gets steamids from database by categories
-steamids = database.get_steamids_from_categories("stn_bots", categories)
-#steamids = database.get_all_steamids("stn_bots")
+#steamids = database.get_steamids_from_categories("stn_bots", categories)
+steamids = database.get_all_steamids("stn_bots")
+steamids = steamids[5:6]
+#steamids = database.get_all_steamids("scraptf_bots")
+#steamids = steamids[17:]
 
 # deletes all previously loaded new items
-database.delete_all_from_column(new_item_table)
+database.delete_all_from_column(new_items_table)
 
 all_valuable_items = []
 tries = 0
 for steamid in steamids:
     # gets inv
-    inv, status = Loader.fetch_inventory(steamid)
+    inv, status = inventory.fetch_inventory(steam_id=steamid)
     
     if status == codes.ok:
         tries = 0
 
         # maps item instances with their descriptions and gets inv as dict from json 
-        inv = Mapper.map_inventory(inv, steamid)
+        inv = inventory.map_inventory(inv, steamid)
 
         # compares inv to last and picks out new items
-        new_items = database.compare_items(inv, item_table)
-
+        new_items = database.compare_items(inv, all_items_table)
         # adds ONLY new items to database
-        database.add_items(new_items, new_item_table)
+        database.add_items(new_items, new_items_table)
 
         # deletes old items from item column
-        database.delete_from_column_where_steamid(item_table, steamid)
-
+        database.delete_from_column_where_steamid(all_items_table, steamid)
         # adds all items to database
-        database.add_items(inv, item_table)
+        database.add_items(inv, all_items_table)
 
         # checks for valuable items
         valuable_items = item.find_valuable_items(items=new_items)
-
         # adds valuable items to database
-        database.add_items(valuable_items, valuable_item_table)
-
+        database.add_items(valuable_items, valuable_items_table)
+        
         all_valuable_items.extend(valuable_items)
         #sleep(10)
 
@@ -108,15 +128,16 @@ if all_valuable_items:
 
     message = f"{len(all_valuable_items)} valuable items"
     for item in all_valuable_items:
+        name = None
         try:
             name = cursor.execute("SELECT name FROM stn_bots WHERE steamid = ?;", (item.steamid, )).fetchone()[0]
         except Exception:
             pass
-
+        
         stn_item = stn.search(item.name)
         link = None
         if stn_item:
-            link = stn_item["url"]
+            link = stn.create_item_link(stn_item["name"])
 
         if name and link:
             message += f"\nNAME: {item.name}, BOT: {name}, LINK: {link}\n"
