@@ -91,7 +91,7 @@ class Item_methods():
                 valuabale_items.append(item)
             elif item.spell:
                 valuabale_items.append(item)
-            elif item.parts and any(part.lower() in item.parts.lower() for part in self.valuable_parts):
+            elif item.parts and any(item_part in self.valuable_parts for item_part in item.parts.lower()):
                 valuabale_items.append(item)
         return valuabale_items
             

@@ -69,7 +69,7 @@ categories = ["killstreaks"]
 # gets steamids from database by categories
 #steamids = database.get_steamids_from_categories("stn_bots", categories)
 steamids = database.get_all_steamids("stn_bots")
-steamids = steamids[0:1]
+#steamids = ["76561198309750232"]
 
 # deletes all previously loaded new items
 database.delete_all_from_column(new_items_table)
