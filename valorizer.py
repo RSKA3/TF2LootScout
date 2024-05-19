@@ -3,19 +3,22 @@ from database import DB
 from item import Item_methods
 from notifications import Notifications
 from stn import Stn
+from logger import setup_logger, clear_log_file, is_week_since_last_clear, store_last_cleared_date
 
 from requests import codes
 from time import sleep
 from sys import exit
 import sqlite3
-from time import time
 import configparser
-#TODO: implement proper logging
-import logging
+
+# set up logging first
+logger = setup_logger(name = "valorizer")
+logger.log(level=20, msg = f"logger setup, started running")
 
 # config
+config_file_path = "data/config.ini"
 config = configparser.ConfigParser()
-config.read('data/config.ini')
+config.read(config_file_path)
 # init variables from config
 log_file_path = config.get("Paths", "log")
 database_file_path = config.get("Paths", "database")
@@ -23,7 +26,6 @@ database_file_path = config.get("Paths", "database")
 all_items_table = config.get("Table", "items")
 new_items_table = config.get("Table", "new_items")
 valuable_items_table = config.get("Table", "valuable_items")
-error_table = config.get("Table", "error")
 bots_table = config.get("Table", "bots")
 stn_table = config.get("Table", "stn")
 # Valuable
@@ -35,27 +37,28 @@ valuable_paints = config.get("Valuable", "paints")
 parts = config.get("Aspects", "parts")
 # STN
 stn_api_key = config.get("STN", "api_key")
+# telegram
+telegram_message_max_length = config.getint("Telegram", "message_max_length")
+telegram_token = config.get("Telegram", "token")
+telegram_chat_id = config.get("Telegram", "chat_id")
 
-# logger
-print(log_file_path)
-logging.basicConfig(filename=log_file_path, level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-logger=logging.getLogger(__name__)
-logger.info(f"{int(time())} Program started")
+# clears logger if its been 7 days since last clear
+if is_week_since_last_clear(config_file=config_file_path):
+    clear_log_file(log_file_path)
+    store_last_cleared_date(config_file=config_file_path)
 
 # creates sqlite3 connection, cursor and loads DB class
 connect = sqlite3.connect(database=database_file_path)
 cursor = connect.cursor()
+
+# load classes
 database = DB(conn=connect)
-# loads rest of classes
 inventory = Inventory(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
                     valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
 item = Item_methods(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
                     valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
-notifications = Notifications(token = "7106357963:AAGVHfEj4kzhF5am444SIfpB8kRttDy_FHI", chat_id = "6653108996")
+notifications = Notifications(token = telegram_token, chat_id = telegram_chat_id)
 stn = Stn(connect=connect, table=stn_table, api_key=stn_api_key)
-
-def add_run(*, success: int, reason: str, time: int = int(time())):
-    cursor.execute(f"INSERT INTO {error_table} VALUES (?, ?, ?);", (success, reason, time))
 
 # HERE IS WHERE THE ACTUAL CODE STARTS
 
@@ -64,9 +67,7 @@ categories = ["killstreaks"]
 # gets steamids from database by categories
 #steamids = database.get_steamids_from_categories("stn_bots", categories)
 steamids = database.get_all_steamids("stn_bots")
-steamids = steamids[5:6]
-#steamids = database.get_all_steamids("scraptf_bots")
-#steamids = steamids[17:]
+steamids = steamids[0:7]
 
 # deletes all previously loaded new items
 database.delete_all_from_column(new_items_table)
@@ -78,6 +79,7 @@ for steamid in steamids:
     inv, status = inventory.fetch_inventory(steam_id=steamid)
     
     if status == codes.ok:
+        logger.log(level=20, msg = f"succesfully fetched: {steamid} inventory: {status}")
         tries = 0
 
         # maps item instances with their descriptions and gets inv as dict from json 
@@ -103,53 +105,49 @@ for steamid in steamids:
 
     elif status == codes.too_many_requests:
         tries += 1
-        print("could not load steamid inventory", steamid)
-        print(status, "sleeping for 30 seconds")
+        logger.log(level=30, msg = f"couldn't load steamid inventory: {status}, sleeping for 30s")
         sleep(30)
     elif status == codes.internal_server_error:
-        print(status, "internal server error")
-        print("exiting...")
+        logger.log(level=30, msg = f"internal server error: {status}, exiting...")
         exit(1)
     else:
         tries += 1
-        print("could not load steamid inventory", steamid)
+        logger.log(level=30, msg = f"could not load steamid: {steamid} inventory: {status}")
 
     # if tries exceed 2 close program and report error
     if tries > 2:
-        logger.info(f"{int(time())} Ran unsuccessfully, tried too many times")
-        add_run(success=0, reason="Ran unsuccessfully, tried too many times", time=int(time()))
-        print(f"tried {tries} times, exiting...")
+        logger.log(level=40, msg = f"tried {tries} times to fetch inventory: {status}, exiting...")
         exit(1)
+
+logger.log(level=20, msg = f"successfully ran through all steamids, found {len(all_valuable_items)} valuable items")
 
 print(all_valuable_items)
 # creates telegram message
 if all_valuable_items:
-    add_run(success=1, reason=f"Ran successfully, found {len(all_valuable_items)} valuable items", time=int(time()))
 
-    message = f"{len(all_valuable_items)} valuable items"
+    messages = [f"{len(all_valuable_items)} valuable items"]
     for item in all_valuable_items:
-        name = None
-        try:
-            name = cursor.execute("SELECT name FROM stn_bots WHERE steamid = ?;", (item.steamid, )).fetchone()[0]
-        except Exception:
-            pass
+        message = f"\nNAME: {item.name}"
+
+        bot_name = cursor.execute("SELECT name FROM stn_bots WHERE steamid = ?;", (item.steamid, )).fetchone()
+        if bot_name:
+            bot_name = bot_name[0]
         
         stn_item = stn.search(item.name)
         link = None
         if stn_item:
             link = stn.create_item_link(stn_item["name"])
 
-        if name and link:
-            message += f"\nNAME: {item.name}, BOT: {name}, LINK: {link}\n"
-        elif name:
-            message += f"\nNAME: {item.name}, BOT: {name}\n"
-        else:
-            message += f"\nNAME: {item.name}\n"
+        if bot_name:
+            message = f"{message}, BOT: {bot_name}"
+        if link:
+            message = f"{message}, LINK: {link}"
+        message = f"{message}\n"
+
+        messages.append(message)
 
     # sends telegram message
-    notifications.send_message(message = message)
-else:   
-    add_run(success=1, reason=f"Ran successfully, found no valuable items", time=int(time()))
+    notifications.send_messages(messages = messages, max_length=telegram_message_max_length)
 
 #commits all changes to database
 database.connect.commit()

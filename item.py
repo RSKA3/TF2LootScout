@@ -132,7 +132,6 @@ class Item_methods():
                 item.craftable = False
             
             elif self.check_parts(value):
-                print(value)
                 if item.parts:
                     item.parts += "," + self.get_part(value)
                 else:
@@ -211,25 +210,21 @@ class Item_methods():
             return match.group("sheen")
    
     def get_paint(self, value):
-        print(value)
         match = re.search(r"paint color: (?P<paint>[a-z0-9 .\-']+)", value)
         if match:
             return match.group("paint")
     
     def get_spell(self, value):
-        print(value)
         match = re.search(r"halloween: (?P<spell>[a-z0-9 .\-']+)", value)
         if match:
             return match.group("spell")
 
     def get_effect(self, value):
-        print(value)
         match = re.search(r"unusual effect: (?P<effect>[a-z0-9 .\-']+)", value)
         if match:
             return match.group("effect")
     
     def get_part(self, value):
-        print(value)
         match = re.search(r"\((?P<part>[a-z0-9 .\-'ü]+):", value)
         if match:
             return match.group("part")
