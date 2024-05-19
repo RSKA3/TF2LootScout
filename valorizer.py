@@ -20,8 +20,10 @@ config_file_path = "data/config.ini"
 config = configparser.ConfigParser()
 config.read(config_file_path)
 # init variables from config
-log_file_path = config.get("Paths", "log")
-database_file_path = config.get("Paths", "database")
+# Path
+base_data_path = config.get("Paths", "base_data")
+log_file_path = base_data_path + config.get("Paths", "log")
+database_file_path = base_data_path + config.get("Paths", "database")
 # Table
 all_items_table = config.get("Table", "items")
 new_items_table = config.get("Table", "new_items")
@@ -67,7 +69,7 @@ categories = ["killstreaks"]
 # gets steamids from database by categories
 #steamids = database.get_steamids_from_categories("stn_bots", categories)
 steamids = database.get_all_steamids("stn_bots")
-steamids = steamids[0:7]
+steamids = steamids[0:1]
 
 # deletes all previously loaded new items
 database.delete_all_from_column(new_items_table)
