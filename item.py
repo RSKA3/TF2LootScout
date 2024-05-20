@@ -91,9 +91,12 @@ class Item_methods():
                 valuabale_items.append(item)
             elif item.spell:
                 valuabale_items.append(item)
-            elif item.parts and any(item_part in self.valuable_parts for item_part in item.parts.lower()):
+            elif item.parts and self.has_valuable_part(item.parts):
                 valuabale_items.append(item)
         return valuabale_items
+    
+    def has_valuable_part(self, parts):
+        return any(part.lower() in self.valuable_parts for part in parts)
             
     def get_description(self, description, item):
         

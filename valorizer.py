@@ -10,6 +10,7 @@ from time import sleep
 from sys import exit
 import sqlite3
 import configparser
+import json
 
 # set up logging first
 logger = setup_logger(name = "valorizer")
@@ -31,12 +32,12 @@ valuable_items_table = config.get("Table", "valuable_items")
 bots_table = config.get("Table", "bots")
 stn_table = config.get("Table", "stn")
 # Valuable
-valuable_sheens = config.get("Valuable", "sheens")
-valuable_killstreakers = config.get("Valuable", "killstreakers")
-valuable_parts = config.get("Valuable", "parts")
-valuable_paints = config.get("Valuable", "paints")
+valuable_sheens = [sheen.strip() for sheen in config.get("Valuable", "sheens").split(",")]
+valuable_killstreakers = [killstreaker.strip() for killstreaker in config.get("Valuable", "killstreakers").split(',')]
+valuable_parts = [part.strip() for part in config.get("Valuable", "parts").split(',')]
+valuable_paints = [paint.strip() for paint in config.get("Valuable", "paints").split(',')]
 # Aspects
-parts = config.get("Aspects", "parts")
+parts = [part.strip() for part in config.get("Aspects", "parts").split(",")]
 # STN
 stn_api_key = config.get("STN", "api_key")
 # telegram
