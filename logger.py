@@ -2,7 +2,7 @@ import logging
 import configparser
 import datetime
 
-def setup_logger(name: str, log_file: str = None, level = logging.DEBUG):
+def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None:
     """ 
     Sets up logging 
     
@@ -14,6 +14,7 @@ def setup_logger(name: str, log_file: str = None, level = logging.DEBUG):
     Returns:
         logging.getLogger()
     """
+
     if not log_file:
         config_file_path = "data/config.ini"
         config = configparser.ConfigParser()
@@ -75,12 +76,13 @@ def store_last_cleared_date(config_file='data/config.ini'):
     with open(config_file, 'w') as f:
         config.write(f)
 
-def clear_log_file(log_file):
+def clear_log_file(log_file: str) -> None:
     """
     Clears the content of the specified log file.
 
     Args:
         log_file (str): The path to the log file.
     """
+
     with open(log_file, 'w'):
         pass  # Truncate the file to zero length

@@ -79,47 +79,49 @@ tries = 0
 for steamid in steamids:
     # gets inv
     inv, status = inventory.fetch_inventory(steam_id=steamid)
-    
-    if status == codes.ok:
-        logger.log(level=20, msg = f"succesfully fetched: {steamid} inventory: {status}")
-        tries = 0
-
-        # maps item instances with their descriptions and gets inv as dict from json 
-        inv = inventory.map_inventory(inv, steamid)
-
-        # compares inv to last and picks out new items
-        new_items = database.compare_items(inv, all_items_table)
-        # adds ONLY new items to database
-        database.add_items(new_items, new_items_table)
-
-        # deletes old items from item column
-        database.delete_from_column_where_steamid(all_items_table, steamid)
-        # adds all items to database
-        database.add_items(inv, all_items_table)
-
-        # checks for valuable items
-        valuable_items = item.find_valuable_items(items=new_items)
-        # adds valuable items to database
-        database.add_items(valuable_items, valuable_items_table)
-        
-        all_valuable_items.extend(valuable_items)
-        #sleep(10)
-
-    elif status == codes.too_many_requests:
-        tries += 1
-        logger.log(level=30, msg = f"couldn't load steamid inventory: {status}, sleeping for 30s")
-        sleep(30)
-    elif status == codes.internal_server_error:
-        logger.log(level=30, msg = f"internal server error: {status}, exiting...")
-        exit(1)
-    else:
-        tries += 1
-        logger.log(level=30, msg = f"could not load steamid: {steamid} inventory: {status}")
 
     # if tries exceed 2 close program and report error
     if tries > 2:
         logger.log(level=40, msg = f"tried {tries} times to fetch inventory: {status}, exiting...")
         exit(1)
+
+    # handles bad status codes
+    if status != codes.ok:
+        if status == codes.too_many_requests:
+            tries += 1
+            logger.log(level=30, msg = f"couldn't load steamid inventory: {status}, sleeping for 30s")
+            sleep(30)
+        elif status == codes.internal_server_error:
+            logger.log(level=30, msg = f"internal server error: {status}, exiting...")
+            exit(1)
+        else:
+            tries += 1
+            logger.log(level=30, msg = f"could not load steamid: {steamid} inventory: {status}")
+        continue
+
+    logger.log(level=20, msg = f"succesfully fetched: {steamid} inventory: {status}")
+    tries = 0
+
+    # maps item instances with their descriptions and gets inv as dict from json 
+    inv = inventory.map_inventory(inv, steamid)
+
+    # compares inv to last and picks out new items
+    new_items = database.compare_items(inv, all_items_table)
+    # adds ONLY new items to database
+    database.add_items(new_items, new_items_table)
+
+    # deletes old items from item column
+    database.delete_from_column_where_steamid(all_items_table, steamid)
+    # adds all items to database
+    database.add_items(inv, all_items_table)
+
+    # checks for valuable items
+    valuable_items = item.find_valuable_items(items=new_items)
+    # adds valuable items to database
+    database.add_items(valuable_items, valuable_items_table)
+    
+    all_valuable_items.extend(valuable_items)
+    #sleep(10)
 
 logger.log(level=20, msg = f"successfully ran through all steamids, found {len(all_valuable_items)} valuable items")
 
