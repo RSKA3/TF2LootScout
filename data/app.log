@@ -1,0 +1,14 @@
+2024-05-23 00:14:48,334 - valorizer - INFO - logger setup, started running
+2024-05-23 00:14:48,335 - DB - INFO - Init DB
+2024-05-23 00:14:48,335 - DB - INFO - Getting all steamids
+2024-05-23 00:14:48,335 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-05-23 00:14:48,336 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-05-23 00:14:49,493 - valorizer - INFO - succesfully fetched: 76561198383794129 inventory: 200
+2024-05-23 00:14:49,813 - DB - INFO - comparing items
+2024-05-23 00:20:23,052 - Valorizer - INFO - logger setup, started running
+2024-05-23 00:20:23,053 - DB - INFO - Init DB
+2024-05-23 00:20:23,053 - DB - INFO - Getting all steamids
+2024-05-23 00:20:23,053 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-05-23 00:20:23,053 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-05-23 00:20:24,185 - Valorizer - INFO - succesfully fetched: 76561198383794129 inventory: 200
+2024-05-23 00:20:24,507 - DB - INFO - comparing items

@@ -2,9 +2,26 @@ import logging
 import configparser
 import datetime
 
-log_file_path = "data/app.log"
+def setup_logger(name: str, log_file: str = None, level = logging.DEBUG):
+    """ 
+    Sets up logging 
+    
+    Args:
+        name (str): Name of logger, like app name
+        log_file (str): Path to log file
+        level: ex. logging.DEBUG
+    
+    Returns:
+        logging.getLogger()
+    """
+    if not log_file:
+        config_file_path = "data/config.ini"
+        config = configparser.ConfigParser()
+        config.read(config_file_path)
+        base_path = config.get("Paths", "base_data")
+        log = config.get("Paths", "log")
+        log_file = base_path + log
 
-def setup_logger(name, log_file=log_file_path, level=logging.DEBUG):
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler = logging.FileHandler(log_file)
     handler.setFormatter(formatter)

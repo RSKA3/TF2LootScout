@@ -10,10 +10,9 @@ from time import sleep
 from sys import exit
 import sqlite3
 import configparser
-import json
 
 # set up logging first
-logger = setup_logger(name = "valorizer")
+logger = setup_logger(name = "Valorizer")
 logger.log(level=20, msg = f"logger setup, started running")
 
 # config
