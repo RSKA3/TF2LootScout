@@ -4,17 +4,18 @@ import datetime
 
 def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None:
     """ 
-    Sets up logging 
+    Sets up logging
     
     Args:
         name (str): Name of logger, like app name
-        log_file (str): Path to log file
+        log_file (str): Path to log file, if not provided defaults to log from config.ini
         level: ex. logging.DEBUG
-    
+
     Returns:
         logging.getLogger()
     """
 
+    # if no logger 
     if not log_file:
         config_file_path = "data/config.ini"
         config = configparser.ConfigParser()

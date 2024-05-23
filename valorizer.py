@@ -10,20 +10,24 @@ from time import sleep
 from sys import exit
 import sqlite3
 import configparser
+import os
 
-# set up logging first
-logger = setup_logger(name = "Valorizer")
-logger.log(level=20, msg = f"logger setup, started running")
+# gets path from env variable
+env = 'VALORIZER_APP_PATH'
+app_path = os.getenv(env)
+if app_path is None:
+    raise ValueError(f"Environment variable {env} is not set")
+print(f"App path is: {app_path}")
 
 # config
-config_file_path = "data/config.ini"
+config_file_path = app_path+"data/config.ini"
 config = configparser.ConfigParser()
 config.read(config_file_path)
 # init variables from config
 # Path
-base_data_path = config.get("Paths", "base_data")
-log_file_path = base_data_path + config.get("Paths", "log")
-database_file_path = base_data_path + config.get("Paths", "database")
+app_data_path = app_path + config.get("Paths", "app_data")
+log_file_path = app_data_path + config.get("Paths", "log")
+database_file_path = app_data_path + config.get("Paths", "database")
 # Table
 all_items_table = config.get("Table", "items")
 new_items_table = config.get("Table", "new_items")
@@ -44,6 +48,10 @@ telegram_message_max_length = config.getint("Telegram", "message_max_length")
 telegram_token = config.get("Telegram", "token")
 telegram_chat_id = config.get("Telegram", "chat_id")
 
+# set up logging
+logger = setup_logger(name = "Valorizer", log_file=log_file_path)
+logger.log(level=20, msg = f"logger setup, started running")
+
 # clears logger if its been 7 days since last clear
 if is_week_since_last_clear(config_file=config_file_path):
     clear_log_file(log_file_path)
@@ -54,7 +62,7 @@ connect = sqlite3.connect(database=database_file_path)
 cursor = connect.cursor()
 
 # load classes
-database = DB(conn=connect)
+database = DB(conn=connect, log_file_path=log_file_path)
 inventory = Inventory(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
                     valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
 item = Item_methods(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
@@ -128,7 +136,7 @@ logger.log(level=20, msg = f"successfully ran through all steamids, found {len(a
 print(all_valuable_items)
 # creates telegram message
 if all_valuable_items:
-
+    # create messages list with first line as messages
     messages = [f"{len(all_valuable_items)} valuable items"]
     for item in all_valuable_items:
         message = f"\nNAME: {item.name}"

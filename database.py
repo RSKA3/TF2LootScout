@@ -3,8 +3,8 @@ import sqlite3
 from logger import setup_logger
 
 class DB():
-    def __init__(self, conn):
-        self.logger = setup_logger("DB")
+    def __init__(self, conn, log_file_path: str):
+        self.logger = setup_logger(name = "DB", log_file=log_file_path)
         self.logger.log(level=20, msg="Init DB")
 
         self.connect = conn
