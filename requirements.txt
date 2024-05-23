@@ -1,7 +1,9 @@
 requests
+os
 sys
 time
 pprint
 json
-bs4
 re
+configparser
+datetime

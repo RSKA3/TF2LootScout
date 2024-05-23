@@ -16,7 +16,8 @@ import os
 env = 'VALORIZER_APP_PATH'
 app_path = os.getenv(env)
 if app_path is None:
-    raise ValueError(f"Environment variable {env} is not set")
+    print(f"Environment variable {env} is not set")
+    app_path = os.getcwd() + "/"
 print(f"App path is: {app_path}")
 
 # config
