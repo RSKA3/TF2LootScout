@@ -87,6 +87,10 @@ steamids = database.get_all_steamids("stn_bots")
 # deletes all previously loaded new items
 database.delete_all_from_column(new_items_table)
 
+if not steamids:
+    print("Please provide some steamids")
+    exit()
+
 all_valuable_items = []
 tries = 0
 for steamid in steamids:
