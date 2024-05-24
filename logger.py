@@ -1,10 +1,15 @@
 import logging
 import configparser
 import datetime
+import os
+
+from helpers import check_if_file_exists, create_file
 
 def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None:
     """ 
     Sets up logging
+
+    Checks if log_file is provided, otherwise defaults to the one in config.ini. Checks if file exists, if not, creates it.
     
     Args:
         name (str): Name of logger, like app name
@@ -15,7 +20,7 @@ def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None
         logging.getLogger()
     """
 
-    # if no logger 
+    # if no logger path provided
     if not log_file:
         config_file_path = "data/config.ini"
         config = configparser.ConfigParser()
@@ -23,6 +28,10 @@ def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None
         base_path = config.get("Paths", "base_data")
         log = config.get("Paths", "log")
         log_file = base_path + log
+
+    # checks if log file exists, if not creates one
+    if not check_if_file_exists(file_path=log_file):
+        create_file(file_path=log_file)
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler = logging.FileHandler(log_file)
@@ -34,7 +43,7 @@ def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None
 
     return logger
 
-def is_week_since_last_clear(config_file='data/config.ini'):
+def is_week_since_last_clear(config_file: str) -> bool:
     # Create a ConfigParser object
     config = configparser.ConfigParser()
 
@@ -57,7 +66,7 @@ def is_week_since_last_clear(config_file='data/config.ini'):
     # Check if a week has passed (7 days or more)
     return days_difference >= 7
 
-def store_last_cleared_date(config_file='data/config.ini'):
+def store_last_cleared_date(config_file: str) -> bool:
     # Get the current datetime
     current_datetime = datetime.datetime.now().isoformat()
 

@@ -3,10 +3,7 @@ __pycache__/
 data/__pycache__/
 
 # Ignore test files
-data/test_inventory.json
-data/test_item_schema.json
-data/test_item.py
-test.py
+test/
 
 # Ignore compiled Python files
 *.pyc

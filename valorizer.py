@@ -4,6 +4,7 @@ from item import Item_methods
 from notifications import Notifications
 from stn import Stn
 from logger import setup_logger, clear_log_file, is_week_since_last_clear, store_last_cleared_date
+from helpers import check_if_file_exists
 
 from requests import codes
 from time import sleep
@@ -22,6 +23,9 @@ print(f"App path is: {app_path}")
 
 # config
 config_file_path = app_path+"data/config.ini"
+if not check_if_file_exists(config_file_path):
+    raise FileExistsError("Please setup config.ini file")
+
 config = configparser.ConfigParser()
 config.read(config_file_path)
 # init variables from config
@@ -63,20 +67,20 @@ connect = sqlite3.connect(database=database_file_path)
 cursor = connect.cursor()
 
 # load classes
-database = DB(conn=connect, log_file_path=log_file_path)
+database = DB(connection=connect, log_file_path=log_file_path)
 inventory = Inventory(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
                     valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
 item = Item_methods(parts = parts, valuable_parts = valuable_parts, valuable_paints = valuable_paints, 
                     valuable_sheens = valuable_sheens, valuable_killstreakers = valuable_killstreakers)
 notifications = Notifications(token = telegram_token, chat_id = telegram_chat_id)
-stn = Stn(connect=connect, table=stn_table, api_key=stn_api_key)
+stn = Stn(connect=connect, table=stn_table, api_key=stn_api_key, log_file_path=log_file_path)
 
 # HERE IS WHERE THE ACTUAL CODE STARTS
 
 # which categories of bots to perse sorry :(
-categories = ["killstreaks"]
-# gets steamids from database by categories
+#categories = ["killstreaks"]
 #steamids = database.get_steamids_from_categories("stn_bots", categories)
+
 steamids = database.get_all_steamids("stn_bots")
 #steamids = ["76561198309750232"]
 
@@ -162,5 +166,5 @@ if all_valuable_items:
     # sends telegram message
     notifications.send_messages(messages = messages, max_length=telegram_message_max_length)
 
-#commits all changes to database
+# commits all changes to database
 database.connect.commit()

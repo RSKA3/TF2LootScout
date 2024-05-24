@@ -4,10 +4,10 @@ import sqlite3
 from time import time
 import urllib.parse
 
-API_KEY = "e92debb161c8d23c131e43184a47969c"
+from logger import setup_logger
 
 class Stn():
-    def __init__(self, *, connect, table: str, api_key):
+    def __init__(self, *, connect, table: str, api_key: str, log_file_path) -> None:
         self.conn = connect
         self.conn.row_factory = sqlite3.Row
         self.row_cursor = self.conn.cursor()
@@ -16,6 +16,9 @@ class Stn():
         self.api_key = api_key
 
         self.PAGE_URL = "https://stntrading.eu"
+
+        self.logger = setup_logger(name="STN", log_file=log_file_path)
+        self.logger.log(level = 20, msg = "Init STN")
 
 # new STN beta API functions
 # credit related functions
@@ -85,8 +88,35 @@ class Stn():
     def add_match_to_database(self, search, match):
         self.row_cursor.execute("INSERT INTO searches VALUES (?, ?)", (search, match))
 
+    def add_match_to_database(self, search: str, match: str) -> bool:
+        """
+        Insert a search term and its match into the 'searches' table.
+
+        Args:
+            search (str): The search term to be added to the database.
+            match (str): The matching item to be added to the database.
+        Returns:
+            True if success, False if not
+        """
+
+        try:
+            self.row_cursor.execute("INSERT INTO searches (search, match) VALUES (?, ?)", (search, match))
+            return True
+        except sqlite3.Error as e:
+            self.logger.log(level = 40, msg = f"An error occurred adding {match}: {e}")
+            return False
+
 # link creator
-    def create_item_link(self, item_name:str):
+    def create_item_link(self, item_name: str) -> str:
+        """
+        Create a URL link for an item with a properly formatted query string.
+
+        Args:
+            item_name (str): The name of the item to be included in the link.
+
+        Returns:
+            str: The formatted URL link for the item.
+        """
         formatted_query = urllib.parse.quote_plus(item_name)
         base_item_path = "https://stntrading.eu/item/tf2/"
         return f"{base_item_path}{formatted_query}"
@@ -132,8 +162,6 @@ class Stn():
         self.add_match_to_database(search = search, match = None)
         self.conn.commit()
         
-
-
         # tries to find item from database
             #if fails checks if has previously been searched from searches
                 # if succeeds gets item from database by using the match

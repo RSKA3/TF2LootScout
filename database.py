@@ -3,14 +3,48 @@ import sqlite3
 from logger import setup_logger
 
 class DB():
-    def __init__(self, conn, log_file_path: str):
+    def __init__(self, connection, log_file_path: str):
+        
         self.logger = setup_logger(name = "DB", log_file=log_file_path)
         self.logger.log(level=20, msg="Init DB")
 
-        self.connect = conn
+        self.connect = connection
         self.connect.row_factory = sqlite3.Row
         self.cursor = self.connect.cursor()
+
+        self.init_item_tables()
     
+    def init_item_tables(self, table_names: list = ["stn_bot_items", "new_stn_bot_items", "valuable_stn_bot_items"]) -> None:
+        """Initialize the database by creating necessary tables if they do not exist."""
+
+        for table_name in table_names:
+            try:
+                self.logger.log(level=20, msg=f"Initializing table {table_name}")
+                self.cursor.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {table_name} (
+                        steamid TEXT NOT NULL,
+                        assetid TEXT NOT NULL,
+                        classid TEXT NOT NULL,
+                        instanceid TEXT NOT NULL,
+                        tradable INT,
+                        craftable INT,
+                        name TEXT NOT NULL,
+                        quality TEXT,
+                        type TEXT,
+                        killstreaks INT,
+                        sheen TEXT,
+                        killstreaker TEXT,
+                        paint TEXT,
+                        spell TEXT,
+                        effect TEXT,
+                        parts TEXT
+                    );
+                    """)
+                self.connect.commit()
+                self.logger.log(level=20, msg=f"Table {table_name} initialized")
+            except sqlite3.Error as e:
+                self.logger.log(level=40, msg=f"Table {table_name} could not be initialized")
+
     def add_items(self, items: dict, column: str):
         for item in items:
             params = (item.steamid, item.assetid, item.classid, item.instanceid, item.tradable, item.craftable, item.name, item.quality, 
@@ -183,7 +217,6 @@ class DB():
             self.logger.log(level=40, msg=f"Error deleting records from {column} where steamid: {steamid}: {e}")
             return False
 
-    # TESTING
     def test(self, column):
         result = self.cursor.execute(f"SELECT * FROM {column} WHERE spell == 'None';")
         result_result = result.fetchone()
