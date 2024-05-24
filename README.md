@@ -1,5 +1,5 @@
 # tf2_valorizer
-tf2_valorizer is a script that gets items from tf2 steam inventories adds them to a database and compares them to previous ones to get the new ones. It checks the new items for valuable items and sends a notification to your phone through telegram.
+tf2_valorizer is a script that extracts TF2 items from Steam inventories, adds them to an SQLite database, and compares them with previously stored items to identify new and valuable items. It scans for valuable items among the new additions and sends notifications to your phone via Telegram.
 
 ## Installation
 
@@ -7,7 +7,7 @@ tf2_valorizer is a script that gets items from tf2 steam inventories adds them t
 2. Pip install -r /path/to/requirements.txt
 
 ## Usage
-1. Add your own STN.eu api key and telegram token and chatid to config.ini
+1. Add your own STN.eu api key and telegram token and chatid to data/config.ini
 2. Run valorizer.py
 
 ### Cronjob:
