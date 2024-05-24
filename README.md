@@ -3,12 +3,14 @@
 
 ## Installation
 
-1. Fork the repo
-2. ```sh
+1. Fork the repo.
+2. Install the required packages: 
+```sh
    pip install -r /path/to/requirements.txt
+```
 
 ## Usage
-1. Add your own STN.eu API key (`api_key`), Telegram token (`token`) and chat ID (`chat_id`) to data/config.ini
+1. Add your own STN.eu API key (`api_key`), Telegram token (`token`) and chat ID (`chat_id`) to `data/config.ini`.
 2. Run the script:
 ```sh
    python valorizer.py

@@ -8,3 +8,6 @@ test/
 # Ignore compiled Python files
 *.pyc
 *.pyo
+
+# Ignore data
+data_backup/
