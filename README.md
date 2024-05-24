@@ -10,6 +10,11 @@ tf2_valorizer is a script that gets items from tf2 steam inventories adds them t
 1. Add your own STN.eu api key and telegram token and chatid to config.ini
 2. Run valorizer.py
 
+### Cronjob:
+Replace paths and add this to crontab -e to run the program every half hour
+1. VALORIZER_APP_PATH=/path/tp/tf2_valorizer/
+2. */30 * * * * /path/to/python3 /path/to/tf2_valorizer/valorizer.py >> /path/to/tf2_valorizer/data/cron.log 2>&1
+
 You can set the environement variable VALORIZER_APP_PATH otherwise just defaults to current directory
 
 ## Contributing
