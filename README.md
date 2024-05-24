@@ -17,10 +17,6 @@ Replace paths and add this to crontab -e to run the program every half hour
 
 You can set the environement variable VALORIZER_APP_PATH otherwise just defaults to current directory
 
-## Contributing
-
-WRITE SOMETHING
-
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
