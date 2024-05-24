@@ -1,6 +1,7 @@
 # Ignore __pycache__ directories
 __pycache__/
 data/__pycache__/
+.pytest_cache
 
 # Ignore test files
 test/
