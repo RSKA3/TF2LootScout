@@ -1,7 +1,6 @@
 import logging
 import configparser
 import datetime
-import os
 
 from helpers import check_if_file_exists, create_file
 
@@ -43,7 +42,7 @@ def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None
 
     return logger
 
-def is_week_since_last_clear(config_file: str) -> bool:
+def is_days_since_last_clear(config_file: str) -> bool:
     # Create a ConfigParser object
     config = configparser.ConfigParser()
 
@@ -64,7 +63,7 @@ def is_week_since_last_clear(config_file: str) -> bool:
     days_difference = (current_datetime - last_cleared_date).days
 
     # Check if a week has passed (7 days or more)
-    return days_difference >= 7
+    return days_difference >= config.getint("Logger", "days_between_clear")
 
 def store_last_cleared_date(config_file: str) -> bool:
     # Get the current datetime

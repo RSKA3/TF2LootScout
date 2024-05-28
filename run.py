@@ -3,7 +3,7 @@ from database import DB
 from item import Item_methods
 from notifications import Notifications
 from stn import Stn
-from logger import setup_logger, clear_log_file, is_week_since_last_clear, store_last_cleared_date
+from logger import setup_logger, clear_log_file, is_days_since_last_clear, store_last_cleared_date
 from helpers import check_if_file_exists
 
 from requests import codes
@@ -53,12 +53,17 @@ telegram_message_max_length = config.getint("Telegram", "message_max_length")
 telegram_token = config.get("Telegram", "token")
 telegram_chat_id = config.get("Telegram", "chat_id")
 
+if not all([stn_api_key, telegram_token, telegram_chat_id]):
+    print(f"Error: Please set variables in", config_file_path)
+    exit(0)
+
 # set up logging
 logger = setup_logger(name = "Valorizer", log_file=log_file_path)
 logger.log(level=20, msg = f"logger setup, started running")
 
 # clears logger if its been 7 days since last clear
-if is_week_since_last_clear(config_file=config_file_path):
+if is_days_since_last_clear(config_file=config_file_path):
+    print("Clearing log file")
     clear_log_file(log_file_path)
     store_last_cleared_date(config_file=config_file_path)
 
