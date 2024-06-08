@@ -42,19 +42,8 @@ def setup_logger(name: str, log_file: str = None, level = logging.DEBUG) -> None
 
     return logger
 
-def is_days_since_last_clear(config_file: str) -> bool:
-    # Create a ConfigParser object
-    config = configparser.ConfigParser()
-
-    # Read the config file
-    config.read(config_file)
-
-    # Check if the 'last_cleared_date' exists
-    if 'Logger' in config and 'last_cleared_date' in config['Logger']:
-        last_cleared_date = datetime.datetime.fromisoformat(config['Logger']['last_cleared_date'])
-    else:
-        # If the date is not found, assume it's been more than a week
-        return True
+def is_days_since_last_clear(last_clear: str, days_between_clear: int) -> bool:
+    last_cleared_date = datetime.datetime.fromisoformat(last_clear)
 
     # Get the current datetime
     current_datetime = datetime.datetime.now()
@@ -63,7 +52,7 @@ def is_days_since_last_clear(config_file: str) -> bool:
     days_difference = (current_datetime - last_cleared_date).days
 
     # Check if a week has passed (7 days or more)
-    return days_difference >= config.getint("Logger", "days_between_clear")
+    return days_difference >= days_between_clear
 
 def store_last_cleared_date(config_file: str) -> bool:
     # Get the current datetime

@@ -12,3 +12,6 @@ test/
 
 # Ignore data
 data_backup/
+
+# test file
+test.py

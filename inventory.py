@@ -22,13 +22,13 @@ class Inventory():
         except:
             return [False, Inventory.status_code]
         
-    def map_inventory(self, inventory, steamid = None) -> list:
+    def map_inventory(self, inventory, steamid = None, name = None) -> list:
         # create list of items
         items = []
         for asset in inventory["assets"]:
             for description in inventory["descriptions"]:
                 if asset["classid"] == description["classid"] and asset["instanceid"] == description["instanceid"]:
-                    item = self.item.to_item(asset=asset, description=description, steamid=steamid)
+                    item = self.item.to_item(asset=asset, description=description, steamid=steamid, bot_name=name)
                     items.append(item)
         return items
         

@@ -1,5 +1,5 @@
 # TF2LootScout
-`TF2LootScout` is a script that extracts TF2 items from Steam inventories, adds them to an SQLite database, and compares them with previously stored items to identify new and valuable items. It scans for valuable items among the new additions and sends notifications to your phone via Telegram.
+`TF2LootScout` is a script that extracts TF2 items from STN.eu bot Steam inventories, adds them to an SQLite database, and compares them with previously stored items to identify new and valuable items. It scans for valuable items among the new additions and sends notifications to your phone via Telegram.
 
 ## Installation
 

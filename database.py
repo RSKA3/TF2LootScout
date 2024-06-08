@@ -48,10 +48,9 @@ class DB():
     def add_items(self, items: dict, column: str):
         for item in items:
             params = (item.steamid, item.assetid, item.classid, item.instanceid, item.tradable, item.craftable, item.name, item.quality, 
-                    item.type, item.rarity, item.collection, item.exterior, item.sku, item.killstreaks, item.sheen,
-                    item.killstreaker, item.paint, item.spell, item.effect, item.parts)
+                    item.type, item.killstreaks, item.sheen, item.killstreaker, item.paint, item.spell, item.effect, item.parts)
 
-            self.cursor.execute(f'INSERT INTO {column} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', params)
+            self.cursor.execute(f'INSERT INTO {column} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', params)
 
     def compare_items(self, items: dict, column: str) -> list:
         self.logger.log(level=20, msg="comparing items")
@@ -60,64 +59,6 @@ class DB():
             if not self.check_if_item_exists(steamid=item.steamid, assetid=item.assetid, classid=item.classid, instanceid=item.instanceid, column=column):
                 new_items.append(item)
         return new_items
-    
-    def get_steamids_from_categories(self, column: str, categories: list) -> list:
-        """
-        Retrieves all steamids associated with the given categories from the specified column in the database.
-
-        This function executes a SELECT query to fetch steamids from the specified column where the category matches any
-        of the provided categories. It returns a list of steamids.
-
-        Args:
-            column (str): The name of the column in the database to fetch steamids from.
-            categories (list): A list of category values to filter the steamids.
-
-        Returns:
-            list: A list of steamids associated with the specified categories if successful, or an empty list if an error occurs.
-        """
-
-        self.logger.log(level=20, msg=f"Getting all steamids from categories: {categories}")
-        try:
-            steamids = []
-            # Sanitize the column name
-            safe_column = column.replace('"', '""')
-            # Iterate over each category and fetch steamids for each
-            for category in categories:
-                # Execute the query safely and fetch all rows
-                rows = self.cursor.execute(f"SELECT steamid FROM '{safe_column}' WHERE UPPER(category) = UPPER(?);", (category, )).fetchall()
-                # Extend the steamids list with steamids from the current category
-                steamids.extend([row[0] for row in rows])
-            self.logger.log(level=20, msg=f"Got all steamids from categories")
-            return steamids
-        except Exception as e:
-            self.logger.log(level=40, msg=f"Failed to get steamids from categories: {e}")
-            return []
-        
-    def get_all_steamids(self, column: str) -> list:
-        """
-        Retrieves all steamids from the specified column in the database.
-
-        This function executes a SELECT query to fetch all steamids from the specified column.
-        It returns a list of steamids.
-
-        Args:
-            column (str): The name of the column in the database to fetch steamids from.
-
-        Returns:
-            list: A list of steamids if successful, or an empty list if an error occurs.
-        """
-        
-        try:
-            self.logger.log(level=20, msg="Getting all steamids")
-            # Sanitize the column name
-            safe_column = column.replace('"', '""')
-            # Execute the query and fetch all rows
-            rows = self.cursor.execute(f'SELECT steamid FROM "{safe_column}";').fetchall()
-            # Extract steamids from the rows and return them as a list
-            return [row[0] for row in rows]
-        except Exception as e:
-            self.logger.log(level=40, msg=f"Failed to get steamids from {column}: {e}")
-            return []
 
     def check_if_item_exists(self, steamid: str, assetid: str, classid: str, instanceid: str, column: str) -> bool:
         """
@@ -222,4 +163,4 @@ class DB():
         result_result = result.fetchone()
         print(result_result)
         column = "new_stn_strange_bots"
-        self.cursor.execute(f"INSERT INTO {column} ('steamid', 'assetid', 'classid', 'instanceid', 'tradable', 'craftable', 'name', 'quality', 'type', 'rarity', 'collection', 'exterior', 'sku', 'killstreaks', 'sheen', 'killstreaker', 'paint', 'spell', 'effect', 'parts') VALUES ({result_result});")
+        self.cursor.execute(f"INSERT INTO {column} ('steamid', 'assetid', 'classid', 'instanceid', 'tradable', 'craftable', 'name', 'quality', 'type', 'killstreaks', 'sheen', 'killstreaker', 'paint', 'spell', 'effect', 'parts') VALUES ({result_result});")

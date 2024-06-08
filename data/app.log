@@ -1,41 +1,80 @@
-2024-05-28 18:57:03,053 - DB - INFO - Init DB
-2024-05-28 18:57:03,053 - DB - INFO - Initializing table stn_bot_items
-2024-05-28 18:57:03,054 - DB - INFO - Table stn_bot_items initialized
-2024-05-28 18:57:03,054 - DB - INFO - Initializing table new_stn_bot_items
-2024-05-28 18:57:03,054 - DB - INFO - Table new_stn_bot_items initialized
-2024-05-28 18:57:03,054 - DB - INFO - Initializing table valuable_stn_bot_items
-2024-05-28 18:57:03,054 - DB - INFO - Table valuable_stn_bot_items initialized
-2024-05-28 18:57:03,054 - STN - INFO - Init STN
-2024-05-28 18:57:03,054 - DB - INFO - Getting all steamids
-2024-05-28 18:57:03,054 - DB - INFO - Deleting all records from new_stn_bot_items
-2024-05-28 18:57:03,055 - DB - INFO - Successfully deleted all records from new_stn_bot_items
-2024-05-28 18:57:04,426 - Valorizer - INFO - succesfully fetched: 76561198383794129 inventory: 200
-2024-05-28 18:57:04,645 - DB - INFO - comparing items
-2024-05-28 18:59:14,902 - Valorizer - INFO - logger setup, started running
-2024-05-28 18:59:14,903 - DB - INFO - Init DB
-2024-05-28 18:59:14,903 - DB - INFO - Initializing table stn_bot_items
-2024-05-28 18:59:14,904 - DB - INFO - Table stn_bot_items initialized
-2024-05-28 18:59:14,904 - DB - INFO - Initializing table new_stn_bot_items
-2024-05-28 18:59:14,904 - DB - INFO - Table new_stn_bot_items initialized
-2024-05-28 18:59:14,904 - DB - INFO - Initializing table valuable_stn_bot_items
-2024-05-28 18:59:14,904 - DB - INFO - Table valuable_stn_bot_items initialized
-2024-05-28 18:59:14,904 - STN - INFO - Init STN
-2024-05-28 18:59:14,904 - DB - INFO - Getting all steamids
-2024-05-28 18:59:14,904 - DB - INFO - Deleting all records from new_stn_bot_items
-2024-05-28 18:59:14,904 - DB - INFO - Successfully deleted all records from new_stn_bot_items
-2024-05-28 18:59:16,486 - Valorizer - INFO - succesfully fetched: 76561198383794129 inventory: 200
-2024-05-28 18:59:16,708 - DB - INFO - comparing items
-2024-05-28 19:01:15,703 - Valorizer - INFO - logger setup, started running
-2024-05-28 19:01:15,704 - DB - INFO - Init DB
-2024-05-28 19:01:15,704 - DB - INFO - Initializing table stn_bot_items
-2024-05-28 19:01:15,704 - DB - INFO - Table stn_bot_items initialized
-2024-05-28 19:01:15,704 - DB - INFO - Initializing table new_stn_bot_items
-2024-05-28 19:01:15,704 - DB - INFO - Table new_stn_bot_items initialized
-2024-05-28 19:01:15,704 - DB - INFO - Initializing table valuable_stn_bot_items
-2024-05-28 19:01:15,704 - DB - INFO - Table valuable_stn_bot_items initialized
-2024-05-28 19:01:15,705 - STN - INFO - Init STN
-2024-05-28 19:01:15,705 - DB - INFO - Getting all steamids
-2024-05-28 19:01:15,705 - DB - INFO - Deleting all records from new_stn_bot_items
-2024-05-28 19:01:15,705 - DB - INFO - Successfully deleted all records from new_stn_bot_items
-2024-05-28 19:01:16,705 - Valorizer - INFO - succesfully fetched: 76561198383794129 inventory: 200
-2024-05-28 19:01:16,931 - DB - INFO - comparing items
+2024-06-08 18:35:34,668 - DB - INFO - Init DB
+2024-06-08 18:35:34,669 - DB - INFO - Initializing table stn_bot_items
+2024-06-08 18:35:34,669 - DB - INFO - Table stn_bot_items initialized
+2024-06-08 18:35:34,669 - DB - INFO - Initializing table new_stn_bot_items
+2024-06-08 18:35:34,669 - DB - INFO - Table new_stn_bot_items initialized
+2024-06-08 18:35:34,669 - DB - INFO - Initializing table valuable_stn_bot_items
+2024-06-08 18:35:34,669 - DB - INFO - Table valuable_stn_bot_items initialized
+2024-06-08 18:35:34,670 - STN - INFO - Init STN
+2024-06-08 18:35:34,670 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-06-08 18:35:34,670 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-06-08 18:35:35,671 - Valorizer - INFO - Successfully fetched: 76561198383794129 inventory: 200
+2024-06-08 18:35:35,883 - DB - INFO - comparing items
+2024-06-08 18:36:45,125 - Valorizer - INFO - Logger setup, started running
+2024-06-08 18:36:45,125 - DB - INFO - Init DB
+2024-06-08 18:36:45,125 - DB - INFO - Initializing table stn_bot_items
+2024-06-08 18:36:45,126 - DB - INFO - Table stn_bot_items initialized
+2024-06-08 18:36:45,126 - DB - INFO - Initializing table new_stn_bot_items
+2024-06-08 18:36:45,126 - DB - INFO - Table new_stn_bot_items initialized
+2024-06-08 18:36:45,126 - DB - INFO - Initializing table valuable_stn_bot_items
+2024-06-08 18:36:45,126 - DB - INFO - Table valuable_stn_bot_items initialized
+2024-06-08 18:36:45,126 - STN - INFO - Init STN
+2024-06-08 18:36:45,126 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-06-08 18:36:45,127 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-06-08 18:36:46,142 - Valorizer - INFO - Successfully fetched: 76561198383794129 inventory: 200
+2024-06-08 18:36:46,359 - DB - INFO - comparing items
+2024-06-08 18:39:54,919 - Valorizer - INFO - Logger setup, started running
+2024-06-08 18:39:54,919 - DB - INFO - Init DB
+2024-06-08 18:39:54,920 - DB - INFO - Initializing table stn_bot_items
+2024-06-08 18:39:54,920 - DB - INFO - Table stn_bot_items initialized
+2024-06-08 18:39:54,920 - DB - INFO - Initializing table new_stn_bot_items
+2024-06-08 18:39:54,920 - DB - INFO - Table new_stn_bot_items initialized
+2024-06-08 18:39:54,920 - DB - INFO - Initializing table valuable_stn_bot_items
+2024-06-08 18:39:54,920 - DB - INFO - Table valuable_stn_bot_items initialized
+2024-06-08 18:39:54,920 - STN - INFO - Init STN
+2024-06-08 18:39:54,921 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-06-08 18:39:54,921 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-06-08 18:39:55,953 - Valorizer - INFO - Successfully fetched: 76561198383794129 inventory: 200
+2024-06-08 18:39:56,193 - DB - INFO - comparing items
+2024-06-08 18:40:03,635 - DB - INFO - Deleting all records from stn_bot_items where steamid: 76561198383794129
+2024-06-08 18:40:03,640 - DB - INFO - Successfully deleted records from stn_bot_items where steamid: 76561198383794129
+2024-06-08 18:40:04,585 - Valorizer - INFO - Successfully fetched: 76561199582352552 inventory: 200
+2024-06-08 18:40:04,787 - DB - INFO - comparing items
+2024-06-08 18:40:30,771 - Valorizer - INFO - Logger setup, started running
+2024-06-08 18:40:30,772 - DB - INFO - Init DB
+2024-06-08 18:40:30,772 - DB - INFO - Initializing table stn_bot_items
+2024-06-08 18:40:30,772 - DB - INFO - Table stn_bot_items initialized
+2024-06-08 18:40:30,772 - DB - INFO - Initializing table new_stn_bot_items
+2024-06-08 18:40:30,772 - DB - INFO - Table new_stn_bot_items initialized
+2024-06-08 18:40:30,772 - DB - INFO - Initializing table valuable_stn_bot_items
+2024-06-08 18:40:30,772 - DB - INFO - Table valuable_stn_bot_items initialized
+2024-06-08 18:40:30,772 - STN - INFO - Init STN
+2024-06-08 18:40:30,773 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-06-08 18:40:30,773 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-06-08 18:40:41,662 - Valorizer - INFO - Logger setup, started running
+2024-06-08 18:40:41,662 - DB - INFO - Init DB
+2024-06-08 18:40:41,662 - DB - INFO - Initializing table stn_bot_items
+2024-06-08 18:40:41,663 - DB - INFO - Table stn_bot_items initialized
+2024-06-08 18:40:41,663 - DB - INFO - Initializing table new_stn_bot_items
+2024-06-08 18:40:41,663 - DB - INFO - Table new_stn_bot_items initialized
+2024-06-08 18:40:41,663 - DB - INFO - Initializing table valuable_stn_bot_items
+2024-06-08 18:40:41,663 - DB - INFO - Table valuable_stn_bot_items initialized
+2024-06-08 18:40:41,663 - STN - INFO - Init STN
+2024-06-08 18:40:41,663 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-06-08 18:40:41,663 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-06-08 18:41:51,603 - Valorizer - INFO - Logger setup, started running
+2024-06-08 18:41:51,603 - DB - INFO - Init DB
+2024-06-08 18:41:51,603 - DB - INFO - Initializing table stn_bot_items
+2024-06-08 18:41:51,604 - DB - INFO - Table stn_bot_items initialized
+2024-06-08 18:41:51,604 - DB - INFO - Initializing table new_stn_bot_items
+2024-06-08 18:41:51,604 - DB - INFO - Table new_stn_bot_items initialized
+2024-06-08 18:41:51,604 - DB - INFO - Initializing table valuable_stn_bot_items
+2024-06-08 18:41:51,604 - DB - INFO - Table valuable_stn_bot_items initialized
+2024-06-08 18:41:51,604 - STN - INFO - Init STN
+2024-06-08 18:41:51,604 - DB - INFO - Deleting all records from new_stn_bot_items
+2024-06-08 18:41:51,604 - DB - INFO - Successfully deleted all records from new_stn_bot_items
+2024-06-08 18:41:52,579 - Valorizer - INFO - Successfully fetched: 76561198383794129 inventory: 200
+2024-06-08 18:41:52,794 - DB - INFO - comparing items
+2024-06-08 18:42:00,114 - DB - INFO - Deleting all records from stn_bot_items where steamid: 76561198383794129
+2024-06-08 18:42:00,120 - DB - INFO - Successfully deleted records from stn_bot_items where steamid: 76561198383794129
+2024-06-08 18:42:00,131 - Valorizer - INFO - Successfully ran through all steamids, found 0 valuable items

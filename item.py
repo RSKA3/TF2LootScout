@@ -6,6 +6,7 @@ import re
 
 @dataclass
 class Item:
+    bot_name : str = None
     steamid : str = None
     classid : str = None
     instanceid : str = None
@@ -33,7 +34,7 @@ class Item_methods():
         self.parts = [part.lower() for part in parts]
 
     #important methods
-    def to_item(self, *, asset: dict, description: dict, steamid: str = None) -> dataclass:
+    def to_item(self, *, asset: dict, description: dict, steamid: str = None, bot_name = None) -> dataclass:
         """ Turns asset, description and steamid to a single item dataclass
 
             Args:
@@ -48,6 +49,7 @@ class Item_methods():
         item = Item()
 
         # fill in self.item
+        item.bot_name = bot_name
         item.assetid = asset["assetid"]
         item.steamid = steamid
         item.classid = description["classid"]
